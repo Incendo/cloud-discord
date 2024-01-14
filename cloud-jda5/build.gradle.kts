@@ -5,5 +5,7 @@ plugins {
 
 dependencies {
     api(projects.cloudDiscordCommon)
+    implementation(libs.cloud.annotations)
+
     implementation(libs.jda5)
 }
