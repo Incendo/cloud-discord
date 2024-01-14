@@ -67,6 +67,13 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
         this.commandTree = commandTree;
 
         final OptionRegistry<C> optionRegistry = new StandardOptionRegistry<>();
+        optionRegistry
+                .registerMapping(JDAOptionType.USER, JDAParser.userParser())
+                .registerMapping(JDAOptionType.CHANNEL, JDAParser.channelParser())
+                .registerMapping(JDAOptionType.ROLE, JDAParser.roleParser())
+                .registerMapping(JDAOptionType.MENTIONABLE, JDAParser.mentionableParser())
+                .registerMapping(JDAOptionType.ATTACHMENT, JDAParser.attachmentParser());
+
         this.discordCommandFactory = new StandardDiscordCommandFactory<>(optionRegistry);
 
         this.nodeProcessor = new NodeProcessor<>(this.commandTree);

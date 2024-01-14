@@ -90,6 +90,13 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
 
         this.discordSettings.set(DiscordSetting.AUTO_REGISTER_SLASH_COMMANDS, true);
         this.registerDefaultExceptionHandlers();
+
+        this.parserRegistry()
+                .registerParser(JDAParser.userParser())
+                .registerParser(JDAParser.roleParser())
+                .registerParser(JDAParser.channelParser())
+                .registerParser(JDAParser.mentionableParser())
+                .registerParser(JDAParser.attachmentParser());
     }
 
     @Override

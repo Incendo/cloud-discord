@@ -71,6 +71,7 @@ final class CommandListener<C> extends ListenerAdapter {
                 .guild(event.getGuild())
                 .replyCallback(event)
                 .interactionEvent(event)
+                .addAllOptionMappings(event.getOptions())
                 .build();
         this.commandManager.commandExecutor().executeCommand(
                 this.commandManager.senderMapper().map(interaction),
@@ -93,6 +94,7 @@ final class CommandListener<C> extends ListenerAdapter {
                 .guild(event.getGuild())
                 .replyCallback(null)
                 .interactionEvent(null)
+                .addAllOptionMappings(event.getOptions())
                 .build();
         event.replyChoices(
                 this.commandManager.suggestionFactory().suggestImmediately(
@@ -119,7 +121,12 @@ final class CommandListener<C> extends ListenerAdapter {
     private @NonNull String extractCommandName(final @NonNull CommandInteractionPayload payload) {
         final StringBuilder command = new StringBuilder(payload.getFullCommandName());
         payload.getOptions().forEach(option -> {
-            command.append(" ").append(option.getAsString());
+            command.append(" ");
+            if (JDAOptionType.JDA_TYPES.stream().anyMatch(type -> type.value() == option.getType().getKey())) {
+                command.append(option.getName());
+            } else {
+                command.append(option.getAsString());
+            }
         });
         return command.toString();
     }

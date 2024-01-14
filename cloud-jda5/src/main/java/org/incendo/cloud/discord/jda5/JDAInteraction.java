@@ -23,10 +23,13 @@
 //
 package org.incendo.cloud.discord.jda5;
 
+import java.util.List;
+import java.util.Optional;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -74,6 +77,23 @@ public interface JDAInteraction {
      * @return the reply callback, or {@code null}
      */
     @Nullable IReplyCallback replyCallback();
+
+    /**
+     * Returns the raw JDA option mappings.
+     *
+     * @return option mappings
+     */
+    @NonNull List<@NonNull OptionMapping> optionMappings();
+
+    /**
+     * Returns the option mapping with the given {@code key}, if it exists.
+     *
+     * @param key mapping key
+     * @return the mapping
+     */
+    default @NonNull Optional<@NonNull OptionMapping> getOptionMapping(final @NonNull String key) {
+        return this.optionMappings().stream().filter(mapping -> mapping.getName().equalsIgnoreCase(key)).findFirst();
+    }
 
 
     /**
