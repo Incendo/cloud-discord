@@ -39,7 +39,10 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -97,6 +100,46 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
                 .registerParser(JDAParser.channelParser())
                 .registerParser(JDAParser.mentionableParser())
                 .registerParser(JDAParser.attachmentParser());
+
+        // Common parameter injections.
+        this.parameterInjectorRegistry().registerInjector(
+                JDAInteraction.class,
+                (ctx, annotations) -> ctx.get(CONTEXT_JDA_INTERACTION)
+        );
+        this.parameterInjectorRegistry().registerInjector(
+                User.class,
+                (ctx, annotations) -> ctx.get(CONTEXT_JDA_INTERACTION).user()
+        );
+        this.parameterInjectorRegistry().registerInjector(
+                Member.class,
+                (ctx, annotations) -> {
+                    final JDAInteraction jdaInteraction = ctx.get(CONTEXT_JDA_INTERACTION);
+                    final GenericCommandInteractionEvent event = jdaInteraction.interactionEvent();
+                    if (event == null) {
+                        return null;
+                    }
+                    return event.getMember();
+                }
+        );
+        this.parameterInjectorRegistry().registerInjector(
+                Guild.class,
+                (ctx, annotations) -> ctx.get(CONTEXT_JDA_INTERACTION).guild()
+        );
+        this.parameterInjectorRegistry().registerInjector(
+                Channel.class,
+                (ctx, annotations) -> {
+                    final JDAInteraction jdaInteraction = ctx.get(CONTEXT_JDA_INTERACTION);
+                    final GenericCommandInteractionEvent event = jdaInteraction.interactionEvent();
+                    if (event == null) {
+                        return null;
+                    }
+                    return event.getChannel();
+                }
+        );
+        this.parameterInjectorRegistry().registerInjector(
+                JDA.class,
+                (ctx, annotations) -> ctx.get(CONTEXT_JDA_INTERACTION).user().getJDA()
+        );
     }
 
     @Override
