@@ -1,0 +1,45 @@
+[plugins]
+cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }
+cloud-buildLogic-rootProject-publishing = { id = "org.incendo.cloud-build-logic.publishing.root-project", version.ref = "cloud-build-logic" }
+cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.spotless.root-project", version.ref = "cloud-build-logic" }
+
+[versions]
+cloud-build-logic = "0.0.3"
+ktlint = "1.0.1"
+checkstyle = "10.12.5"
+kotlin = "1.9.20"
+
+# Cloud
+cloud = "2.0.0-SNAPSHOT"
+
+# External
+immutables = "2.10.0"
+jda = "5.0.0-beta.19"
+
+# Test
+jupiterEngine = "5.10.1"
+mockitoCore = "4.11.0"
+mockitoJupiter = "4.11.0"
+truth = "1.1.4"
+
+[libraries]
+cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
+gradleKotlinJvm = { group = "org.jetbrains.kotlin.jvm", name = "org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
+
+# Cloud
+cloud-core = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
+cloud-annotations = { group = "cloud.commandframework", name = "cloud-annotations", version.ref = "cloud" }
+
+# External
+immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
+jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
+
+# Test
+jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "jupiterEngine" }
+jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "jupiterEngine" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+mockito-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockitoJupiter" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+truth-java8 = { group = "com.google.truth.extensions", name = "truth-java8-extension", version.ref = "truth" }
+
+[bundles]
