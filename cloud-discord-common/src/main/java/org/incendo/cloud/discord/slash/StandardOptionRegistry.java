@@ -28,9 +28,8 @@ import cloud.commandframework.arguments.standard.BooleanParser;
 import cloud.commandframework.arguments.standard.DoubleParser;
 import cloud.commandframework.arguments.standard.IntegerParser;
 import cloud.commandframework.arguments.standard.StringParser;
-import io.leangen.geantyref.AnnotatedTypeMap;
+import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
-import java.lang.reflect.AnnotatedType;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ import org.checkerframework.common.returnsreceiver.qual.This;
 public final class StandardOptionRegistry<C> implements OptionRegistry<C> {
 
     private final Map<DiscordOptionType<?>, ParserDescriptor<C, ?>> parserMap = new HashMap<>();
-    private final Map<AnnotatedType, DiscordOptionType<?>> optionMap = new AnnotatedTypeMap<>();
+    private final Map<Class<?>, DiscordOptionType<?>> optionMap = new HashMap<>();
 
     /**
      * Creates a new standard option registry.
@@ -67,13 +66,16 @@ public final class StandardOptionRegistry<C> implements OptionRegistry<C> {
             final @NonNull ParserDescriptor<C, ?> parser
     ) {
         this.parserMap.put(optionType, parser);
-        this.optionMap.put(parser.valueType().getAnnotatedType(), optionType);
+        this.optionMap.put(GenericTypeReflector.erase(parser.valueType().getType()), optionType);
         return this;
     }
 
     @Override
     public @NonNull DiscordOptionType<?> getOption(final @NonNull TypeToken<?> valueType) {
-        return this.optionMap.getOrDefault(valueType.getAnnotatedType(), DiscordOptionType.STRING);
+        return this.optionMap.getOrDefault(
+                GenericTypeReflector.erase(GenericTypeReflector.box(valueType.getType())),
+                DiscordOptionType.STRING
+        );
     }
 
     @Override
