@@ -22,10 +22,16 @@ dependencyResolutionManagement {
                 snapshotsOnly()
             }
         }
+        maven("https://m2.dv8tion.net/releases") {
+            name = "dv8tion"
+            mavenContent { releasesOnly() }
+        }
     }
 }
 
 rootProject.name = "cloud-discord"
 
 include(":cloud-discord-common")
+include(":cloud-javacord")
+include(":cloud-jda")
 include(":cloud-jda5")
