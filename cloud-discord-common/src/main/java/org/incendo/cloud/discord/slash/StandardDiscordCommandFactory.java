@@ -145,9 +145,16 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
             }
         }
 
+        final String description;
+        if (component.description().isEmpty()) {
+            description = component.name();
+        } else {
+            description = component.description().textDescription();
+        }
+
         return DiscordCommand.<C>builder()
                 .name(component.name())
-                .description(node.component().description().textDescription())
+                .description(description)
                 .addAllOptions(options)
                 .build();
     }
@@ -155,6 +162,13 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     @SuppressWarnings({"rawtypes", "unchecked"})
     private @NonNull DiscordOption<C> createOption(final @NonNull CommandNode<C> node) {
         final CommandComponent<C> component = node.component();
+
+        final String description;
+        if (component.description().isEmpty()) {
+            description = component.name();
+        } else {
+            description = component.description().textDescription();
+        }
 
         if (component.type() == CommandComponent.ComponentType.LITERAL) {
             // We need to determine whether to flatten the children into a sub-command
@@ -182,7 +196,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
             return ImmutableSubCommand.<C>builder()
                     .name(component.name())
-                    .description(component.description().textDescription())
+                    .description(description)
                     .addAllOptions(children)
                     .build();
         }
@@ -198,7 +212,8 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
             autoComplete = false;
         }
 
-        return ImmutableVariable.<Object>builder().name(component.name()).description(component.description().textDescription())
+        return ImmutableVariable.<Object>builder().name(component.name())
+                .description(description)
                 .type(optionType)
                 .required(component.required())
                 .autocomplete(autoComplete)
