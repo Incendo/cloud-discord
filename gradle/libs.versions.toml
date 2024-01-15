@@ -20,8 +20,8 @@ jda5 = "5.0.0-beta.19"
 
 # Test
 jupiterEngine = "5.10.1"
-mockitoCore = "4.11.0"
-mockitoJupiter = "4.11.0"
+mockitoCore = "5.9.0"
+mockitoJupiter = "5.9.0"
 truth = "1.2.0"
 
 [libraries]
