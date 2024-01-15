@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -176,8 +177,10 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
             if (this.isolationLevel == Isolation.GLOBAL) {
                 users = event.getJDA().getUsersByName(input, true);
             } else if (event.isFromGuild()) {
-                users = event.getGuild().getMembersByEffectiveName(input, true)
-                        .stream().map(Member::getUser)
+                users = event.getGuild().getMembers()
+                        .stream()
+                        .filter(member -> member.getEffectiveName().toLowerCase().startsWith(input))
+                        .map(Member::getUser)
                         .collect(Collectors.toList());
             } else if (event.getAuthor().getName().equalsIgnoreCase(input)) {
                 users = Collections.singletonList(event.getAuthor());
@@ -215,10 +218,11 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
 
             user = globalUser;
         } else if (event.isFromGuild()) {
+            final Guild guild = event.getGuild();
             Member member = event.getGuild().getMemberById(id);
 
             if (member == null) { // fallback if user is not cached
-                member = event.getGuild().retrieveMemberById(id).complete();
+                member = guild.retrieveMemberById(id).complete();
             }
 
             user = member.getUser();

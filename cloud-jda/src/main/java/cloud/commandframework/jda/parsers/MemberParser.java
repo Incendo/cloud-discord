@@ -30,6 +30,7 @@ import cloud.commandframework.context.CommandInput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -114,7 +115,10 @@ public final class MemberParser<C> implements ArgumentParser<C, Member> {
             if (event.getAuthor().getName().equalsIgnoreCase(input)) {
                 members = Collections.singletonList(event.getMember());
             } else {
-                members = event.getGuild().getMembersByEffectiveName(input, true);
+                members = event.getGuild().getMembers()
+                        .stream()
+                        .filter(member -> member.getEffectiveName().toLowerCase().startsWith(input))
+                        .collect(Collectors.toList());
             }
 
             if (members.isEmpty()) {
