@@ -28,6 +28,7 @@ import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
+import org.incendo.cloud.discord.jda5.example.commands.AggregateCommand;
 import org.incendo.cloud.discord.jda5.example.commands.AnnotatedCommands;
 import org.incendo.cloud.discord.jda5.example.commands.PingCommand;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public final class Examples {
 
     private final JDA5CommandManager<JDAInteraction> commandManager;
     private final List<? extends Example> examples = Arrays.asList(
+            new AggregateCommand(),
             new AnnotatedCommands(),
             new PingCommand()
     );
