@@ -36,6 +36,10 @@ import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.discord.jda5.dummy.DummyChannel;
+import org.incendo.cloud.discord.jda5.dummy.DummyMentionable;
+import org.incendo.cloud.discord.jda5.dummy.DummyRole;
+import org.incendo.cloud.discord.jda5.dummy.DummyUser;
 
 /**
  * A parser which wraps a JDA {@link OptionMapping}.
@@ -119,12 +123,27 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
     @NonNull ArgumentParseResult<T> extract(@NonNull OptionMapping mapping);
 
     @Override
+    @SuppressWarnings("unchecked")
     default @NonNull ArgumentParseResult<@NonNull T> parse(
             final @NonNull CommandContext<@NonNull C> commandContext,
             final @NonNull CommandInput commandInput
     ) {
         final JDAInteraction interaction = commandContext.get(JDA5CommandManager.CONTEXT_JDA_INTERACTION);
         final OptionMapping mapping = interaction.getOptionMapping(commandInput.readString()).orElse(null);
-        return this.extract(mapping);
+        try {
+            return this.extract(mapping);
+        } catch (final Exception e) {
+            if (commandContext.isSuggestions()) {
+                switch (mapping.getType()) {
+                    case USER: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyUser.dummy());
+                    case CHANNEL: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyChannel.dummy());
+                    case ROLE: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyRole.dummy());
+                    case MENTIONABLE: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyMentionable.dummy());
+                    // TODO(City): Support attachments too.
+                    default: break;
+                }
+            }
+            return ArgumentParseResult.failure(e);
+        }
     }
 }

@@ -23,6 +23,13 @@
 //
 package org.incendo.cloud.discord.jda5;
 
+import cloud.commandframework.arguments.suggestion.Suggestion;
+import cloud.commandframework.arguments.suggestion.Suggestions;
+import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.context.CommandContextFactory;
+import cloud.commandframework.context.StandardCommandContextFactory;
+import cloud.commandframework.util.StringUtils;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -38,12 +45,14 @@ import org.slf4j.LoggerFactory;
 
 final class CommandListener<C> extends ListenerAdapter {
 
-    private final Logger logger = LoggerFactory.getLogger(CommandListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandListener.class);
 
     private final JDA5CommandManager<C> commandManager;
+    private final CommandContextFactory<C> contextFactory;
 
     CommandListener(final @NonNull JDA5CommandManager<C> commandManager) {
         this.commandManager = commandManager;
+        this.contextFactory = new StandardCommandContextFactory<>(commandManager);
     }
 
     @Override
@@ -52,6 +61,7 @@ final class CommandListener<C> extends ListenerAdapter {
             return;
         }
 
+        LOGGER.debug("Registering guild commands for guild: {}", event.getGuild());
         this.commandManager.registerGuildCommands(event.getGuild());
     }
 
@@ -61,6 +71,7 @@ final class CommandListener<C> extends ListenerAdapter {
             return;
         }
 
+        LOGGER.debug("Registering global commands");
         this.commandManager.registerGlobalCommands(event.getJDA());
     }
 
@@ -96,26 +107,45 @@ final class CommandListener<C> extends ListenerAdapter {
                 .interactionEvent(null)
                 .addAllOptionMappings(event.getOptions())
                 .build();
-        event.replyChoices(
-                this.commandManager.suggestionFactory().suggestImmediately(
-                        this.commandManager.senderMapper().map(interaction),
-                                commandName
-                ).list()
-                        .stream()
-                        .map(suggestion -> {
-                            switch (event.getFocusedOption().getType()) {
-                                case INTEGER:
-                                    return new Command.Choice(suggestion.suggestion(), Integer.parseInt(suggestion.suggestion()));
-                                case NUMBER:
-                                    return new Command.Choice(suggestion.suggestion(),
-                                            Double.parseDouble(suggestion.suggestion()));
-                                default:
-                                    return new Command.Choice(suggestion.suggestion(), suggestion.suggestion());
-                            }
 
-                        })
-                        .collect(Collectors.toList())
-        ).queue();
+        final CommandContext<C> context = this.contextFactory.create(
+                true,
+                this.commandManager.senderMapper().map(interaction)
+        );
+        context.store(JDA5CommandManager.CONTEXT_JDA_INTERACTION, interaction);
+
+        try {
+            final Suggestions<C, ? extends Suggestion> suggestions = this.commandManager.suggestionFactory()
+                    .suggest(context, commandName)
+                    .join();
+            event.replyChoices(suggestions.list()
+                            .stream()
+                            .map(suggestion -> suggestion.withSuggestion(StringUtils.trimBeforeLastSpace(
+                                    suggestion.suggestion(),
+                                    suggestions.commandInput()
+                            )))
+                            .map(suggestion -> {
+                                switch (event.getFocusedOption().getType()) {
+                                    case INTEGER:
+                                        return new Command.Choice(suggestion.suggestion(), Integer.parseInt(suggestion.suggestion()));
+                                    case NUMBER:
+                                        return new Command.Choice(suggestion.suggestion(),
+                                                Double.parseDouble(suggestion.suggestion()));
+                                    default:
+                                        return new Command.Choice(suggestion.suggestion(), suggestion.suggestion());
+                                }
+
+                            })
+                            .collect(Collectors.toList())
+            ).queue();
+        } catch (final CompletionException completionException) {
+            final Throwable cause = completionException.getCause();
+            // We unwrap if we can, otherwise we don't. There's no point in wrapping again.
+            if (cause instanceof RuntimeException) {
+                throw ((RuntimeException) cause);
+            }
+            throw completionException;
+        }
     }
 
     private @NonNull String extractCommandName(final @NonNull CommandInteractionPayload payload) {

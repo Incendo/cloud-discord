@@ -24,6 +24,7 @@
 package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.standard.ByteParser;
 import cloud.commandframework.arguments.standard.DoubleParser;
@@ -127,9 +128,9 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
         while (currentNode != null) {
             boolean subCommand = false;
             for (final CommandNode<C> child : currentNode.children()) {
-                final DiscordOption<C> childOption = this.createOption(child);
-                subCommand = subCommand || childOption instanceof DiscordOption.SubCommand;
-                options.add(childOption);
+                final List<DiscordOption<C>> childOptions = this.createOptions(child);
+                subCommand = subCommand || (childOptions.size() == 1 && childOptions.get(0) instanceof DiscordOption.SubCommand);
+                options.addAll(childOptions);
             }
 
             // If we encountered a subcommand or a subcommand group, then we let the subcommand deal with the
@@ -160,7 +161,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private @NonNull DiscordOption<C> createOption(final @NonNull CommandNode<C> node) {
+    private @NonNull List<DiscordOption<C>> createOptions(final @NonNull CommandNode<C> node) {
         final CommandComponent<C> component = node.component();
 
         final String description;
@@ -175,7 +176,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
             // or whether to recursively extract the arguments.
             List<DiscordOption<C>> children = new ArrayList<>(node.children()
                     .stream()
-                    .map(this::createOption)
+                    .flatMap(child -> this.createOptions(child).stream())
                     .collect(Collectors.toList()));
 
             // If there's only one child and the child isn't a sub-command, then we recursively find the children.
@@ -184,7 +185,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
                 CommandNode<C> child = node.children().get(0);
                 while (child != null) {
-                    children.add(this.createOption(child));
+                    children.addAll(this.createOptions(child));
 
                     if (child.isLeaf()) {
                         child = null;
@@ -194,32 +195,45 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
                 }
             }
 
-            return ImmutableSubCommand.<C>builder()
-                    .name(component.name())
-                    .description(description)
-                    .addAllOptions(children)
-                    .build();
+            return Collections.singletonList(
+                    ImmutableSubCommand.<C>builder()
+                            .name(component.name())
+                            .description(description)
+                            .addAllOptions(children)
+                            .build()
+            );
         }
 
-        final DiscordOptionType optionType = this.optionRegistry.getOption(component.valueType());
-        final Collection choices = this.extractChoices(component.suggestionProvider());
-        final Range range = this.extractRange(component.parser());
-
-        final boolean autoComplete;
-        if (choices.isEmpty()) {
-            autoComplete = DiscordOptionType.AUTOCOMPLETE.contains(optionType);
+        final List<CommandComponent<C>> components;
+        if (component.parser() instanceof AggregateCommandParser) {
+            final AggregateCommandParser<C, ?> aggregateCommandParser = (AggregateCommandParser<C, ?>) component.parser();
+            components = aggregateCommandParser.components();
         } else {
-            autoComplete = false;
+            components = Collections.singletonList(component);
         }
 
-        return ImmutableVariable.<Object>builder().name(component.name())
-                .description(description)
-                .type(optionType)
-                .required(component.required())
-                .autocomplete(autoComplete)
-                .addAllChoices(choices)
-                .range(range)
-                .build();
+        return components.stream()
+                .map(innerComponent -> {
+                    final DiscordOptionType optionType = this.optionRegistry.getOption(innerComponent.valueType());
+                    final Collection choices = this.extractChoices(innerComponent.suggestionProvider());
+                    final Range range = this.extractRange(innerComponent.parser());
+
+                    final boolean autoComplete;
+                    if (choices.isEmpty()) {
+                        autoComplete = DiscordOptionType.AUTOCOMPLETE.contains(optionType);
+                    } else {
+                        autoComplete = false;
+                    }
+
+                    return (DiscordOption<C>) ImmutableVariable.<C>builder().name(innerComponent.name())
+                            .description(description)
+                            .type(optionType)
+                            .required(innerComponent.required())
+                            .autocomplete(autoComplete)
+                            .addAllChoices(choices)
+                            .range(range)
+                            .build();
+                }).collect(Collectors.toList());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

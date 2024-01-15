@@ -188,3 +188,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,java,maven,gradle,kotlin,git
+
+# Example files
+examples/example-jda5/bot.properties
