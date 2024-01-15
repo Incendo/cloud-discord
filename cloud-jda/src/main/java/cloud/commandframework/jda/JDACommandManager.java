@@ -38,15 +38,16 @@ import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.jda.parsers.ChannelParser;
+import cloud.commandframework.jda.parsers.MemberParser;
 import cloud.commandframework.jda.parsers.RoleParser;
 import cloud.commandframework.jda.parsers.UserParser;
 import io.leangen.geantyref.TypeToken;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -116,16 +117,20 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
         /* Register JDA Parsers */
         this.parserRegistry().registerParserSupplier(TypeToken.get(User.class), parserParameters ->
                 new UserParser<>(
-                        new HashSet<>(Arrays.asList(UserParser.ParserMode.values())),
+                        EnumSet.allOf(UserParser.ParserMode.class),
                         UserParser.Isolation.GLOBAL
+                ));
+        this.parserRegistry().registerParserSupplier(TypeToken.get(Member.class), parserParameters ->
+                new MemberParser<>(
+                        EnumSet.allOf(MemberParser.ParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(MessageChannel.class), parserParameters ->
                 new ChannelParser<>(
-                        new HashSet<>(Arrays.asList(ChannelParser.ParserMode.values()))
+                        EnumSet.allOf(ChannelParser.ParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(Role.class), parserParameters ->
                 new RoleParser<>(
-                        new HashSet<>(Arrays.asList(RoleParser.ParserMode.values()))
+                        EnumSet.allOf(RoleParser.ParserMode.class)
                 ));
 
         // No "native" command system means that we can delete commands just fine.
