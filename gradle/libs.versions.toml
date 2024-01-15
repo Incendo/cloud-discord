@@ -7,7 +7,7 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 cloud-build-logic = "0.0.3"
 ktlint = "1.0.1"
 checkstyle = "10.12.5"
-kotlin = "1.9.20"
+kotlin = "1.9.22"
 
 # Cloud
 cloud = "2.0.0-SNAPSHOT"
