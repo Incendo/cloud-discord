@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 final class CommandListener<C> extends ListenerAdapter {
 
-    private final Logger logger = LoggerFactory.getLogger(CommandListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandListener.class);
 
     private final JDA5CommandManager<C> commandManager;
 
@@ -52,6 +52,7 @@ final class CommandListener<C> extends ListenerAdapter {
             return;
         }
 
+        LOGGER.debug("Registering guild commands for guild: {}", event.getGuild());
         this.commandManager.registerGuildCommands(event.getGuild());
     }
 
@@ -61,6 +62,7 @@ final class CommandListener<C> extends ListenerAdapter {
             return;
         }
 
+        LOGGER.debug("Registering global commands");
         this.commandManager.registerGlobalCommands(event.getJDA());
     }
 
