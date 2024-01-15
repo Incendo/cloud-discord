@@ -147,7 +147,7 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
                 }
 
                 try {
-                    final ArgumentParseResult<User> result = this.userFromId(event, input, id);
+                    final ArgumentParseResult<User> result = this.userFromId(event, input, Long.parseLong(id));
                     commandInput.readString();
                     return result;
                 } catch (final UserNotFoundParseException | NumberFormatException e) {
@@ -162,7 +162,7 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
 
         if (this.modes.contains(ParserMode.ID)) {
             try {
-                final ArgumentParseResult<User> result = this.userFromId(event, input, input);
+                final ArgumentParseResult<User> result = this.userFromId(event, input, Long.parseLong(input));
                 commandInput.readString();
                 return result;
             } catch (final UserNotFoundParseException | NumberFormatException e) {
@@ -202,17 +202,27 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
     private @NonNull ArgumentParseResult<User> userFromId(
             final @NonNull MessageReceivedEvent event,
             final @NonNull String input,
-            final @NonNull String id
+            final @NonNull Long id
     )
             throws UserNotFoundParseException, NumberFormatException {
         final User user;
         if (this.isolationLevel == Isolation.GLOBAL) {
-            user = event.getJDA().getUserById(id);
+            User globalUser = event.getJDA().getUserById(id);
+
+            if (globalUser == null) { // fallback if user is not cached
+                globalUser = event.getJDA().retrieveUserById(id).complete();
+            }
+
+            user = globalUser;
         } else if (event.isFromGuild()) {
             Member member = event.getGuild().getMemberById(id);
 
-            user = member != null ? member.getUser() : null;
-        } else if (event.getAuthor().getId().equalsIgnoreCase(id)) {
+            if (member == null) { // fallback if user is not cached
+                member = event.getGuild().retrieveMemberById(id).complete();
+            }
+
+            user = member.getUser();
+        } else if (event.getAuthor().getIdLong() == id) {
             user = event.getAuthor();
         } else {
             user = null;
