@@ -88,7 +88,6 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
         for (final CommandNode<C> rootNode : this.commandTree.rootNodes()) {
             final CommandScope<C> rootScope = (CommandScope<C>) rootNode.nodeMeta().get(NodeProcessor.NODE_META_SCOPE);
             if (!rootScope.overlaps(scope)) {
-                System.out.println("Skipping creating of command " + rootNode.component().name() + " for scope " + scope);
                 continue;
             }
 
