@@ -30,10 +30,13 @@ import cloud.commandframework.context.CommandInput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -140,25 +143,34 @@ public final class MemberParser<C> implements ArgumentParser<C, Member> {
             final @NonNull Long id
     )
             throws MemberNotFoundParseException, NumberFormatException {
-        final Guild guild = event.getGuild();
+       try {
+           final Guild guild = event.getGuild();
 
-        final Member member;
-        if (event.getAuthor().getIdLong() == id) {
-            member = event.getMember();
-        } else {
-            Member guildMember = guild.getMemberById(id);
+           final Member member;
+           if (event.getAuthor().getIdLong() == id) {
+               member = event.getMember();
+           } else {
+               Member guildMember = guild.getMemberById(id);
 
-            if (guildMember == null) { // fallback if member is not cached
-                guildMember = guild.retrieveMemberById(id).complete();
-            }
-            member = guildMember;
-        }
+               if (guildMember == null) { // fallback if member is not cached
+                   guildMember = guild.retrieveMemberById(id).complete();
+               }
+               member = guildMember;
+           }
 
-        if (member == null) {
-            throw new MemberNotFoundParseException(input);
-        } else {
-            return ArgumentParseResult.success(member);
-        }
+           if (member == null) {
+               throw new MemberNotFoundParseException(input);
+           } else {
+               return ArgumentParseResult.success(member);
+           }
+       } catch (final CompletionException e) {
+           if (e.getCause().getClass().equals(ErrorResponseException.class)
+                && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_MEMBER) {
+               //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+               throw new MemberNotFoundParseException(input);
+           }
+           throw e;
+       }
     }
 
 

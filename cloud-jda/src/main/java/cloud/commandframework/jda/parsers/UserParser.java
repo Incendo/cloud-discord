@@ -32,11 +32,14 @@ import cloud.commandframework.context.CommandInput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -221,11 +224,20 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
             final Guild guild = event.getGuild();
             Member member = event.getGuild().getMemberById(id);
 
-            if (member == null) { // fallback if user is not cached
-                member = guild.retrieveMemberById(id).complete();
-            }
+           try {
+               if (member == null) { // fallback if user is not cached
+                   member = guild.retrieveMemberById(id).complete();
+               }
 
-            user = member.getUser();
+               user = member.getUser();
+           } catch (final CompletionException e) {
+               if (e.getCause().getClass().equals(ErrorResponseException.class)
+                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_USER) {
+                   //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+                   throw new UserNotFoundParseException(input);
+               }
+               throw e;
+           }
         } else if (event.getAuthor().getIdLong() == id) {
             user = event.getAuthor();
         } else {
