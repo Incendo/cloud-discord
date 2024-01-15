@@ -25,6 +25,10 @@ package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.Description;
+import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.parser.ArgumentParseResult;
+import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.util.TestCommandManager;
 import org.incendo.cloud.discord.util.TestCommandSender;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,5 +146,66 @@ class StandardDiscordCommandFactoryTest {
                         .description("bar")
                         .build()
         );
+    }
+
+    @Test
+    void testAggregateParser() {
+        // Arrange
+        final AggregateCommandParser<TestCommandSender, TestAggregateObject> parser = AggregateCommandParser
+                .<TestCommandSender>builder()
+                .withComponent("integer", integerParser())
+                .withComponent("string", stringParser())
+                .withComponent("bool", booleanParser())
+                .withDirectMapper(TestAggregateObject.class, (cmdCtx, ctx) -> ArgumentParseResult.success(new TestAggregateObject(
+                        ctx.get("integer"),
+                        ctx.get("string"),
+                        ctx.get("bool")
+                ))).build();
+        this.commandManager.command(this.commandManager.commandBuilder("command").required("aggregate", parser));
+
+        // Act
+        final DiscordCommand<TestCommandSender> command =
+                this.commandFactory.create(this.commandManager.commandTree().getNamedNode("command"));
+
+        // Assert
+        assertThat(command.name()).isEqualTo("command");
+        assertThat(command.options()).hasSize(3);
+        assertThat(command.options().get(0).type()).isEqualTo(DiscordOptionType.INTEGER);
+        assertThat(command.options().get(0).name()).isEqualTo("integer");
+        assertThat(command.options().get(1).type()).isEqualTo(DiscordOptionType.STRING);
+        assertThat(command.options().get(1).name()).isEqualTo("string");
+        assertThat(command.options().get(2).type()).isEqualTo(DiscordOptionType.BOOLEAN);
+        assertThat(command.options().get(2).name()).isEqualTo("bool");
+    }
+
+
+    private static final class TestAggregateObject {
+
+        private final int integer;
+        private final String string;
+        private final boolean bool;
+
+        private TestAggregateObject(final int integer, final @NonNull String string, final boolean bool) {
+            this.integer = integer;
+            this.string = string;
+            this.bool = bool;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o)  {
+                return true;
+            }
+            if (o == null || this.getClass() != o.getClass()) {
+                return false;
+            }
+            final TestAggregateObject that = (TestAggregateObject) o;
+            return this.integer == that.integer && this.bool == that.bool && Objects.equals(this.string, that.string);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.integer, this.string, this.bool);
+        }
     }
 }
