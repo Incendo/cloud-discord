@@ -29,6 +29,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandContextFactory;
 import cloud.commandframework.context.StandardCommandContextFactory;
 import cloud.commandframework.util.StringUtils;
+import java.util.Objects;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -38,11 +39,13 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.DiscordSetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@API(status = API.Status.INTERNAL, since = "1.0.0")
 final class CommandListener<C> extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandListener.class);
@@ -51,7 +54,7 @@ final class CommandListener<C> extends ListenerAdapter {
     private final CommandContextFactory<C> contextFactory;
 
     CommandListener(final @NonNull JDA5CommandManager<C> commandManager) {
-        this.commandManager = commandManager;
+        this.commandManager = Objects.requireNonNull(commandManager, "commandManager");
         this.contextFactory = new StandardCommandContextFactory<>(commandManager);
     }
 

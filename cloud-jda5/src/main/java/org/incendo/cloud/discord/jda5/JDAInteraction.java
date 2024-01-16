@@ -24,6 +24,7 @@
 package org.incendo.cloud.discord.jda5;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -92,6 +93,7 @@ public interface JDAInteraction {
      * @return the mapping
      */
     default @NonNull Optional<@NonNull OptionMapping> getOptionMapping(final @NonNull String key) {
+        Objects.requireNonNull(key, "key");
         return this.optionMappings().stream().filter(mapping -> mapping.getName().equalsIgnoreCase(key)).findFirst();
     }
 

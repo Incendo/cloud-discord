@@ -25,20 +25,35 @@ package org.incendo.cloud.discord.jda5;
 
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext;
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor;
+import java.util.Objects;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.DiscordSetting;
 
+/**
+ * Postprocessor that configures the interaction reply according to the command {@link ReplySetting}.
+ *
+ * @param <C> command sender type
+ * @since 1.0.0
+ */
+@API(status = API.Status.INTERNAL, since = "1.0.0")
 final class ReplyCommandPostprocessor<C> implements CommandPostprocessor<C> {
 
     private final JDA5CommandManager<C> commandManager;
 
     ReplyCommandPostprocessor(final @NonNull JDA5CommandManager<C> commandManager) {
-        this.commandManager = commandManager;
+        this.commandManager = Objects.requireNonNull(commandManager, "commandManager");
     }
 
     @Override
     public void accept(final @NonNull CommandPostprocessingContext<C> context) {
         final JDAInteraction interaction = context.commandContext().get(JDA5CommandManager.CONTEXT_JDA_INTERACTION);
+
+        final IReplyCallback callback = interaction.replyCallback();
+        if (callback == null) {
+            return;
+        }
 
         final ReplySetting<?> fallbackSetting;
         if (this.commandManager.discordSettings().get(DiscordSetting.FORCE_DEFER_NON_EPHEMERAL)) {
@@ -54,7 +69,7 @@ final class ReplyCommandPostprocessor<C> implements CommandPostprocessor<C> {
                 fallbackSetting
         );
         if (replySetting.defer()) {
-            interaction.replyCallback().deferReply(replySetting.ephemeral()).queue();
+            callback.deferReply(replySetting.ephemeral()).queue();
         }
         // This way we can keep track of whether we deferred or not.
         context.commandContext().store(JDA5CommandManager.META_REPLY_SETTING, replySetting);

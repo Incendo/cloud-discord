@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -59,7 +60,8 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
      * @param optionRegistry option registry to retrieve option types from
      */
     public StandardDiscordCommandFactory(final @NonNull OptionRegistry<C> optionRegistry) {
-        this.optionRegistry = optionRegistry;
+        this.optionRegistry = Objects.requireNonNull(optionRegistry, "optionRegistry");
+
         this.registerRangeMapper(new TypeToken<ByteParser<C>>() {
         }, parser -> {
             if (!parser.hasMin() && !parser.hasMax()) {
@@ -116,11 +118,16 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
             final @NonNull TypeToken<P> parserClass,
             final @NonNull RangeMapper<C, T, P> mapper
     ) {
+        Objects.requireNonNull(parserClass, "parserClass");
+        Objects.requireNonNull(mapper, "mapper");
+
         this.rangeMappers.put(GenericTypeReflector.erase(parserClass.getType()), mapper);
     }
 
     @Override
     public @NonNull DiscordCommand<C> create(final @NonNull CommandNode<C> node) {
+        Objects.requireNonNull(node, "node");
+
         final CommandComponent<C> component = node.component();
         final List<DiscordOption<C>> options = new ArrayList<>();
 

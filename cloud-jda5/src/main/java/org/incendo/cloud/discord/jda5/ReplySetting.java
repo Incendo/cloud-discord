@@ -29,6 +29,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 
+/**
+ * Setting that determines how replies will be handled.
+ *
+ * @param <C> command sender type
+ * @since 1.0.0
+ */
 @ImmutableImpl
 @Value.Immutable
 @API(status = API.Status.STABLE, since = "1.0.0")

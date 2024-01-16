@@ -26,6 +26,7 @@ package org.incendo.cloud.discord.jda5.annotations;
 import cloud.commandframework.Command;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.BuilderModifier;
+import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -45,6 +46,7 @@ public final class ReplySettingBuilderModifier<C> implements BuilderModifier<Rep
      * @param annotationParser annotation parser
      */
     public static <C> void install(final @NonNull AnnotationParser<C> annotationParser) {
+        Objects.requireNonNull(annotationParser, "annotationParser");
         annotationParser.registerBuilderModifier(ReplySetting.class, new ReplySettingBuilderModifier<>());
     }
 

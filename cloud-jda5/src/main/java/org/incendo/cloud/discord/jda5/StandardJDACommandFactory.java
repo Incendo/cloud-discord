@@ -29,6 +29,7 @@ import cloud.commandframework.permission.Permission;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -39,6 +40,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.DiscordCommand;
@@ -52,7 +54,14 @@ import org.incendo.cloud.discord.slash.OptionRegistry;
 import org.incendo.cloud.discord.slash.StandardDiscordCommandFactory;
 import org.incendo.cloud.discord.slash.StandardOptionRegistry;
 
-public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
+/**
+ * Standard implementation of {@link JDACommandFactory}.
+ *
+ * @param <C> command sender type
+ * @since 1.0.0
+ */
+@API(status = API.Status.INTERNAL, since = "1.0.0")
+final class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
 
     private final CommandTree<C> commandTree;
     private final DiscordCommandFactory<C> discordCommandFactory;
@@ -65,8 +74,8 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
      *
      * @param commandTree command tree to retrieve commands from
      */
-    public StandardJDACommandFactory(final @NonNull CommandTree<C> commandTree) {
-        this.commandTree = commandTree;
+    StandardJDACommandFactory(final @NonNull CommandTree<C> commandTree) {
+        this.commandTree = Objects.requireNonNull(commandTree, "commandTree");
 
         final OptionRegistry<C> optionRegistry = new StandardOptionRegistry<>();
         optionRegistry
@@ -83,7 +92,7 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
 
     @Override
     public void commandScopePredicate(final @NonNull CommandScopePredicate<C> predicate) {
-        this.commandScopePredicate = predicate;
+        this.commandScopePredicate = Objects.requireNonNull(predicate, "predicate");
     }
 
     @Override

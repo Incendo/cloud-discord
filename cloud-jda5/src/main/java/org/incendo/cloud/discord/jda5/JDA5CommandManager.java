@@ -35,6 +35,7 @@ import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.setting.Configurable;
 import io.leangen.geantyref.TypeToken;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import net.dv8tion.jda.api.JDA;
@@ -88,7 +89,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
         this.commandFactory = new StandardJDACommandFactory<>(this.commandTree());
         this.discordSettings = Configurable.enumConfigurable(DiscordSetting.class);
         this.permissionPredicate = (sender, permission) -> true;
-        this.senderMapper = senderMapper;
+        this.senderMapper = Objects.requireNonNull(senderMapper, "senderMapper");
         this.registerCommandPostProcessor(new ReplyCommandPostprocessor<>(this));
 
         this.discordSettings.set(DiscordSetting.AUTO_REGISTER_SLASH_COMMANDS, true);
@@ -162,7 +163,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
      * @param commandFactory command factory
      */
     public final void commandFactory(final @NonNull JDACommandFactory<C> commandFactory) {
-        this.commandFactory = commandFactory;
+        this.commandFactory = Objects.requireNonNull(commandFactory, "commandFactory");
     }
 
     /**
@@ -198,7 +199,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
      * @param permissionPredicate permission predicate
      */
     public final void permissionPredicate(final @NonNull BiPredicate<C, String> permissionPredicate) {
-        this.permissionPredicate = permissionPredicate;
+        this.permissionPredicate = Objects.requireNonNull(permissionPredicate, "permissionPredicate");
     }
 
     /**
@@ -207,6 +208,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
      * @param jda JDA instance
      */
     public void registerGlobalCommands(final @NonNull JDA jda) {
+        Objects.requireNonNull(jda, "jda");
         jda.updateCommands()
                 .addCommands(this.commandFactory.createCommands(CommandScope.global()))
                 .queue();
@@ -218,6 +220,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
      * @param guild guild to register commands to
      */
     public void registerGuildCommands(final @NonNull Guild guild) {
+        Objects.requireNonNull(guild, "guild");
         guild.updateCommands()
                 .addCommands(this.commandFactory.createCommands(CommandScope.guilds(-1, guild.getIdLong())))
                 .queue();

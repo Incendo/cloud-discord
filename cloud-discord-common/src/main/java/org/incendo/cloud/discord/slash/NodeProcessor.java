@@ -28,6 +28,7 @@ import cloud.commandframework.internal.CommandNode;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -51,15 +52,14 @@ public final class NodeProcessor<C> {
      * @param commandTree tree that should be processed
      */
     public NodeProcessor(final @NonNull CommandTree<C> commandTree) {
-        this.commandTree = commandTree;
+        this.commandTree = Objects.requireNonNull(commandTree, "commandTree");
     }
 
     /**
      * Prepares the command tree.
      */
     public void prepareTree() {
-        this.commandTree.getLeavesRaw(this.commandTree.rootNode())
-                .forEach(this::propagateRequirements);
+        this.commandTree.getLeavesRaw(this.commandTree.rootNode()).forEach(this::propagateRequirements);
     }
 
     @SuppressWarnings("unchecked")

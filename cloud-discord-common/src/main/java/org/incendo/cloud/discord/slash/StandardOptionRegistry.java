@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.common.returnsreceiver.qual.This;
@@ -44,7 +45,7 @@ import org.checkerframework.common.returnsreceiver.qual.This;
  * @param <C> command sender type
  * @since 1.0.0
  */
-@API(status = API.Status.STABLE, since = "1.0.0")
+@API(status = API.Status.INTERNAL, since = "1.0.0")
 public final class StandardOptionRegistry<C> implements OptionRegistry<C> {
 
     private final Map<DiscordOptionType<?>, ParserDescriptor<C, ?>> parserMap = new HashMap<>();
@@ -65,6 +66,9 @@ public final class StandardOptionRegistry<C> implements OptionRegistry<C> {
             final @NonNull DiscordOptionType<?> optionType,
             final @NonNull ParserDescriptor<C, ?> parser
     ) {
+        Objects.requireNonNull(optionType, "optionType");
+        Objects.requireNonNull(parser, "parser");
+
         this.parserMap.put(optionType, parser);
         this.optionMap.put(GenericTypeReflector.erase(parser.valueType().getType()), optionType);
         return this;
@@ -72,6 +76,8 @@ public final class StandardOptionRegistry<C> implements OptionRegistry<C> {
 
     @Override
     public @NonNull DiscordOptionType<?> getOption(final @NonNull TypeToken<?> valueType) {
+        Objects.requireNonNull(valueType, "valueType");
+
         return this.optionMap.getOrDefault(
                 GenericTypeReflector.erase(GenericTypeReflector.box(valueType.getType())),
                 DiscordOptionType.STRING
