@@ -58,6 +58,8 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
     private final DiscordCommandFactory<C> discordCommandFactory;
     private final NodeProcessor<C> nodeProcessor;
 
+    private CommandScopePredicate<C> commandScopePredicate = CommandScopePredicate.alwaysTrue();
+
     /**
      * Creates a new command factory.
      *
@@ -80,6 +82,11 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
     }
 
     @Override
+    public void commandScopePredicate(final @NonNull CommandScopePredicate<C> predicate) {
+        this.commandScopePredicate = predicate;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public @NonNull Collection<@NonNull CommandData> createCommands(final @NonNull CommandScope<C> scope) {
         this.nodeProcessor.prepareTree();
@@ -88,6 +95,10 @@ public class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
         for (final CommandNode<C> rootNode : this.commandTree.rootNodes()) {
             final CommandScope<C> rootScope = (CommandScope<C>) rootNode.nodeMeta().get(NodeProcessor.NODE_META_SCOPE);
             if (!rootScope.overlaps(scope)) {
+                continue;
+            }
+
+            if (!this.commandScopePredicate.test(rootNode, scope)) {
                 continue;
             }
 

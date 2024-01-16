@@ -23,27 +23,39 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import cloud.commandframework.internal.CommandNode;
+import java.util.function.BiPredicate;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.CommandScope;
 
+/**
+ * Predicate that determines whether a command scope should receive a certain command.
+ *
+ * @param <C> command sender type
+ * @since 1.0.0
+ */
+@FunctionalInterface
 @API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+public interface CommandScopePredicate<C> extends BiPredicate<CommandNode<C>, CommandScope<C>> {
 
     /**
-     * Creates the JDA commands.
+     * Returns a predicate that always returns {@code true}.
      *
-     * @param scope current scope
-     * @return created commands
+     * @param <C> command sender type
+     * @return the predicate
      */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
+    static <C> @NonNull CommandScopePredicate<C> alwaysTrue() {
+        return (node, scope) -> true;
+    }
 
     /**
-     * Sets the command scope predicate of the instance.
+     * Returns whether the {@link CommandNode} should be registered as a command for the given {@link CommandScope}.
      *
-     * @param predicate new predicate
+     * @param node  command node that is being registered, this is always a root command node
+     * @param scope scope that the command is being registered to
+     * @return {@code true} if the scope should receive the command, {@code false} if not
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    @Override
+    boolean test(@NonNull CommandNode<C> node, @NonNull CommandScope<C> scope);
 }
