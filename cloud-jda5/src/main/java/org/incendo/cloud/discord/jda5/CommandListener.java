@@ -120,10 +120,16 @@ final class CommandListener<C> extends ListenerAdapter {
                     .join();
             event.replyChoices(suggestions.list()
                             .stream()
-                            .map(suggestion -> suggestion.withSuggestion(StringUtils.trimBeforeLastSpace(
-                                    suggestion.suggestion(),
-                                    suggestions.commandInput()
-                            )))
+                            .map(suggestion -> {
+                                if (suggestion.suggestion().contains(" ")) {
+                                    return suggestion.withSuggestion(StringUtils.trimBeforeLastSpace(
+                                            suggestion.suggestion(),
+                                            suggestions.commandInput()
+                                    ));
+                                }
+                                return suggestion;
+                            })
+                            .filter(suggestion -> !suggestion.suggestion().isEmpty())
                             .map(suggestion -> {
                                 switch (event.getFocusedOption().getType()) {
                                     case INTEGER:
