@@ -31,9 +31,12 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +134,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
                     final ArgumentParseResult<MessageChannel> channel = this.channelFromId(event, input, id);
                     commandInput.readString();
                     return channel;
-                } catch (final ChannelNotFoundException | NumberFormatException e) {
+                } catch (final ChannelNotFoundParseException | NumberFormatException e) {
                     exception = e;
                 }
             } else {
@@ -146,7 +149,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
                 final ArgumentParseResult<MessageChannel> result = this.channelFromId(event, input, input);
                 commandInput.readString();
                 return result;
-            } catch (final ChannelNotFoundException | NumberFormatException e) {
+            } catch (final ChannelNotFoundParseException | NumberFormatException e) {
                 exception = e;
             }
         }
@@ -155,7 +158,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
             final List<TextChannel> channels = event.getGuild().getTextChannelsByName(input, true);
 
             if (channels.isEmpty()) {
-                exception = new ChannelNotFoundException(input);
+                exception = new ChannelNotFoundParseException(input);
             } else if (channels.size() > 1) {
                 exception = new TooManyChannelsFoundParseException(input);
             } else {
@@ -173,14 +176,23 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
             final @NonNull String input,
             final @NonNull String id
     )
-            throws ChannelNotFoundException, NumberFormatException {
-        final MessageChannel channel = event.getGuild().getTextChannelById(id);
+            throws ChannelNotFoundParseException, NumberFormatException {
+        try {
+            final MessageChannel channel = event.getGuild().getTextChannelById(id);
 
-        if (channel == null) {
-            throw new ChannelNotFoundException(input);
+            if (channel == null) {
+                throw new ChannelNotFoundParseException(input);
+            }
+
+            return ArgumentParseResult.success(channel);
+        } catch (final CompletionException e) {
+            if (e.getCause().getClass().equals(ErrorResponseException.class)
+                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+                throw new ChannelNotFoundParseException(input);
+            }
+            throw e;
         }
-
-        return ArgumentParseResult.success(channel);
     }
 
 
@@ -229,7 +241,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
     }
 
 
-    public static final class ChannelNotFoundException extends ChannelParseException {
+    public static final class ChannelNotFoundParseException extends ChannelParseException {
 
         private static final long serialVersionUID = -8299458048947528494L;
 
@@ -238,7 +250,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
          *
          * @param input String input
          */
-        public ChannelNotFoundException(final @NonNull String input) {
+        public ChannelNotFoundParseException(final @NonNull String input) {
             super(input);
         }
 

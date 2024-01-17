@@ -76,6 +76,7 @@ final class JDACommandPreprocessor<C> implements CommandPreprocessor<C> {
 
         context.commandContext().store("MessageReceivedEvent", event);
         context.commandContext().store("MessageChannel", event.getChannel());
+        context.commandContext().store("Message", event.getMessage());
 
         if (event.isFromGuild()) {
             Guild guild = event.getGuild();

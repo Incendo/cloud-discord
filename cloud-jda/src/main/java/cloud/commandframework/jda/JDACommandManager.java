@@ -38,15 +38,22 @@ import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.jda.parsers.ChannelParser;
+import cloud.commandframework.jda.parsers.MemberParser;
 import cloud.commandframework.jda.parsers.RoleParser;
 import cloud.commandframework.jda.parsers.UserParser;
+import cloud.commandframework.jda.permission.BotJDAPermissionException;
+import cloud.commandframework.jda.permission.BotPermissionPostProcessor;
+import cloud.commandframework.jda.permission.UserJDAPermissionException;
+import cloud.commandframework.jda.permission.UserPermissionPostProcessor;
 import io.leangen.geantyref.TypeToken;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -73,6 +80,7 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
     private final long botId;
 
     private final Function<@NonNull C, @NonNull String> prefixMapper;
+    private final Function<@NonNull C, @NonNull List<String>> auxiliaryPrefixMapper;
     private final BiFunction<@NonNull C, @NonNull String, @NonNull Boolean> permissionMapper;
     private final SenderMapper<MessageReceivedEvent, C> senderMapper;
 
@@ -99,11 +107,50 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
             final @Nullable BiFunction<@NonNull C, @NonNull String, @NonNull Boolean> permissionMapper,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
             final @NonNull SenderMapper<MessageReceivedEvent, C> senderMapper
+    ) throws InterruptedException {
+        this(
+                jda,
+                prefixMapper,
+                (c) -> Collections.emptyList(),
+                permissionMapper,
+                commandExecutionCoordinator,
+                senderMapper
+        );
+    }
+
+    /**
+     * Construct a new JDA Command Manager
+     *
+     * @param jda                          JDA instance to register against
+     * @param prefixMapper                 Function that maps the sender to a command prefix string
+     * @param auxiliaryPrefixMapper        Auxiliary prefix mapper used as a workaround for breaking changes until 2.0 is
+     *                                     released. This has been added because there may be instances where you'd like more
+     *                                     than 1 prefix to be checked against
+     * @param permissionMapper             Function used to check if a command sender has the permission to execute a command
+     * @param commandExecutionCoordinator  Execution coordinator instance. The coordinator is in charge of executing incoming
+     *                                     commands. Some considerations must be made when picking a suitable execution coordinator
+     *                                     for your platform. For example, an entirely asynchronous coordinator is not suitable
+     *                                     when the parsers used in that particular platform are not thread safe. If you have
+     *                                     commands that perform blocking operations, however, it might not be a good idea to
+     *                                     use a synchronous execution coordinator. In most cases you will want to pick between
+     *                                     {@link ExecutionCoordinator#simpleCoordinator()} and
+     *                                     {@link ExecutionCoordinator#simpleCoordinator()}
+     * @param senderMapper                 Function that maps {@link MessageReceivedEvent} to the command sender type
+     * @throws InterruptedException If the jda instance does not ready correctly
+     */
+    public JDACommandManager(
+            final @NonNull JDA jda,
+            final @NonNull Function<@NonNull C, @NonNull String> prefixMapper,
+            final @NonNull Function<@NonNull C, @NonNull List<String>> auxiliaryPrefixMapper,
+            final @Nullable BiFunction<@NonNull C, @NonNull String, @NonNull Boolean> permissionMapper,
+            final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
+            final @NonNull SenderMapper<MessageReceivedEvent, C> senderMapper
     )
             throws InterruptedException {
         super(commandExecutionCoordinator, CommandRegistrationHandler.nullCommandRegistrationHandler());
         this.jda = jda;
         this.prefixMapper = prefixMapper;
+        this.auxiliaryPrefixMapper = auxiliaryPrefixMapper;
         this.permissionMapper = permissionMapper;
         this.senderMapper = senderMapper;
         jda.addEventListener(new JDACommandListener<>(this));
@@ -113,19 +160,27 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
         /* Register JDA Preprocessor */
         this.registerCommandPreProcessor(new JDACommandPreprocessor<>(this));
 
+        /* Register JDA Command Postprocessors */
+        this.registerCommandPostProcessor(new BotPermissionPostProcessor<>());
+        this.registerCommandPostProcessor(new UserPermissionPostProcessor<>());
+
         /* Register JDA Parsers */
         this.parserRegistry().registerParserSupplier(TypeToken.get(User.class), parserParameters ->
                 new UserParser<>(
-                        new HashSet<>(Arrays.asList(UserParser.ParserMode.values())),
+                        EnumSet.allOf(UserParser.ParserMode.class),
                         UserParser.Isolation.GLOBAL
+                ));
+        this.parserRegistry().registerParserSupplier(TypeToken.get(Member.class), parserParameters ->
+                new MemberParser<>(
+                        EnumSet.allOf(MemberParser.ParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(MessageChannel.class), parserParameters ->
                 new ChannelParser<>(
-                        new HashSet<>(Arrays.asList(ChannelParser.ParserMode.values()))
+                        EnumSet.allOf(ChannelParser.ParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(Role.class), parserParameters ->
                 new RoleParser<>(
-                        new HashSet<>(Arrays.asList(RoleParser.ParserMode.values()))
+                        EnumSet.allOf(RoleParser.ParserMode.class)
                 ));
 
         // No "native" command system means that we can delete commands just fine.
@@ -150,6 +205,15 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
      */
     public final @NonNull Function<@NonNull C, @NonNull String> getPrefixMapper() {
         return this.prefixMapper;
+    }
+
+    /**
+     * Get the auxiliary prefix mapper
+     *
+     * @return Auxiliary prefix mapper
+     */
+    public final @NonNull Function<C, List<String>> getAuxiliaryPrefixMapper() {
+        return this.auxiliaryPrefixMapper;
     }
 
     /**
@@ -207,6 +271,12 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
                     MESSAGE_INVALID_SYNTAX + prefix + context.exception().correctSyntax()
             ).queue();
         });
+       this.registerHandler(BotJDAPermissionException.class, (channel, throwable) ->
+               channel.sendMessage(throwable.getMessage()).queue()
+       );
+        this.registerHandler(UserJDAPermissionException.class, (channel, throwable) ->
+                channel.sendMessage(throwable.getMessage()).queue()
+        );
     }
 
     private <T extends Throwable> void registerHandler(

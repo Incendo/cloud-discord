@@ -31,8 +31,11 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +130,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
                     final ArgumentParseResult<Role> role = this.roleFromId(event, input, id);
                     commandInput.readString();
                     return role;
-                } catch (final RoleNotFoundException | NumberFormatException e) {
+                } catch (final RoleNotFoundParseException | NumberFormatException e) {
                     exception = e;
                 }
             } else {
@@ -142,7 +145,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
                 final ArgumentParseResult<Role> result = this.roleFromId(event, input, input);
                 commandInput.readString();
                 return result;
-            } catch (final RoleNotFoundException | NumberFormatException e) {
+            } catch (final RoleNotFoundParseException | NumberFormatException e) {
                 exception = e;
             }
         }
@@ -151,7 +154,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
             final List<Role> roles = event.getGuild().getRolesByName(input, true);
 
             if (roles.isEmpty()) {
-                exception = new RoleNotFoundException(input);
+                exception = new RoleNotFoundParseException(input);
             } else if (roles.size() > 1) {
                 exception = new TooManyRolesFoundParseException(input);
             } else {
@@ -169,14 +172,23 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
             final @NonNull String input,
             final @NonNull String id
     )
-            throws RoleNotFoundException, NumberFormatException {
-        final Role role = event.getGuild().getRoleById(id);
+            throws RoleNotFoundParseException, NumberFormatException {
+        try {
+            final Role role = event.getGuild().getRoleById(id);
 
-        if (role == null) {
-            throw new RoleNotFoundException(input);
+            if (role == null) {
+                throw new RoleNotFoundParseException(input);
+            }
+
+            return ArgumentParseResult.success(role);
+        } catch (final CompletionException e) {
+            if (e.getCause().getClass().equals(ErrorResponseException.class)
+                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_ROLE) {
+                //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+                throw new RoleNotFoundParseException(input);
+            }
+            throw e;
         }
-
-        return ArgumentParseResult.success(role);
     }
 
     public static class RoleParseException extends IllegalArgumentException {
@@ -224,7 +236,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
     }
 
 
-    public static final class RoleNotFoundException extends RoleParseException {
+    public static final class RoleNotFoundParseException extends RoleParseException {
 
         private static final long serialVersionUID = 7931804739792920510L;
 
@@ -233,7 +245,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
          *
          * @param input String input
          */
-        public RoleNotFoundException(final @NonNull String input) {
+        public RoleNotFoundParseException(final @NonNull String input) {
             super(input);
         }
 

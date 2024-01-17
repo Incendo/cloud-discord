@@ -32,10 +32,14 @@ import cloud.commandframework.context.CommandInput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -147,7 +151,7 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
                 }
 
                 try {
-                    final ArgumentParseResult<User> result = this.userFromId(event, input, id);
+                    final ArgumentParseResult<User> result = this.userFromId(event, input, Long.parseLong(id));
                     commandInput.readString();
                     return result;
                 } catch (final UserNotFoundParseException | NumberFormatException e) {
@@ -162,7 +166,7 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
 
         if (this.modes.contains(ParserMode.ID)) {
             try {
-                final ArgumentParseResult<User> result = this.userFromId(event, input, input);
+                final ArgumentParseResult<User> result = this.userFromId(event, input, Long.parseLong(input));
                 commandInput.readString();
                 return result;
             } catch (final UserNotFoundParseException | NumberFormatException e) {
@@ -176,8 +180,10 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
             if (this.isolationLevel == Isolation.GLOBAL) {
                 users = event.getJDA().getUsersByName(input, true);
             } else if (event.isFromGuild()) {
-                users = event.getGuild().getMembersByEffectiveName(input, true)
-                        .stream().map(Member::getUser)
+                users = event.getGuild().getMembers()
+                        .stream()
+                        .filter(member -> member.getEffectiveName().toLowerCase().startsWith(input))
+                        .map(Member::getUser)
                         .collect(Collectors.toList());
             } else if (event.getAuthor().getName().equalsIgnoreCase(input)) {
                 users = Collections.singletonList(event.getAuthor());
@@ -202,17 +208,37 @@ public final class UserParser<C> implements ArgumentParser<C, User> {
     private @NonNull ArgumentParseResult<User> userFromId(
             final @NonNull MessageReceivedEvent event,
             final @NonNull String input,
-            final @NonNull String id
+            final @NonNull Long id
     )
             throws UserNotFoundParseException, NumberFormatException {
         final User user;
         if (this.isolationLevel == Isolation.GLOBAL) {
-            user = event.getJDA().getUserById(id);
+            User globalUser = event.getJDA().getUserById(id);
+
+            if (globalUser == null) { // fallback if user is not cached
+                globalUser = event.getJDA().retrieveUserById(id).complete();
+            }
+
+            user = globalUser;
         } else if (event.isFromGuild()) {
+            final Guild guild = event.getGuild();
             Member member = event.getGuild().getMemberById(id);
 
-            user = member != null ? member.getUser() : null;
-        } else if (event.getAuthor().getId().equalsIgnoreCase(id)) {
+           try {
+               if (member == null) { // fallback if user is not cached
+                   member = guild.retrieveMemberById(id).complete();
+               }
+
+               user = member.getUser();
+           } catch (final CompletionException e) {
+               if (e.getCause().getClass().equals(ErrorResponseException.class)
+                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_USER) {
+                   //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+                   throw new UserNotFoundParseException(input);
+               }
+               throw e;
+           }
+        } else if (event.getAuthor().getIdLong() == id) {
             user = event.getAuthor();
         } else {
             user = null;
