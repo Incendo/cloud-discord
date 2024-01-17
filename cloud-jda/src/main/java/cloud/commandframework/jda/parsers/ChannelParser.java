@@ -25,32 +25,31 @@ package cloud.commandframework.jda.parsers;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import java.util.List;
+import cloud.commandframework.jda.repository.JDAChannelRepository;
 import java.util.Set;
-import java.util.concurrent.CompletionException;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.discord.legacy.parser.DiscordChannelParser;
+import org.incendo.cloud.discord.legacy.parser.DiscordParserMode;
+import org.incendo.cloud.discord.legacy.repository.DiscordRepository;
 
 /**
- * Command Argument for {@link MessageChannel}
+ * Parser {@link MessageChannel}
  *
- * @param <C> Command sender type
+ * @param <C> command sender type
  */
 @SuppressWarnings("unused")
-public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel> {
+@API(status = API.Status.STABLE, since = "2.0.0")
+public final class ChannelParser<C> extends DiscordChannelParser<C, Guild, MessageChannel> {
 
     /**
-     * Creates a new server parser.
+     * Creates a new channel parser.
      *
      * @param <C> command sender type
      * @param modes parser modes to use
@@ -58,7 +57,7 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> @NonNull ParserDescriptor<C, MessageChannel> channelParser(final @NonNull Set<ParserMode> modes) {
+    public static <C> @NonNull ParserDescriptor<C, MessageChannel> channelParser(final @NonNull Set<DiscordParserMode> modes) {
         return ParserDescriptor.of(new ChannelParser<>(modes), MessageChannel.class);
     }
 
@@ -71,192 +70,40 @@ public final class ChannelParser<C> implements ArgumentParser<C, MessageChannel>
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, MessageChannel> channelComponent(final @NonNull Set<ParserMode> modes) {
+    public static <C> CommandComponent.@NonNull Builder<C, MessageChannel> channelComponent(
+            final @NonNull Set<DiscordParserMode> modes
+    ) {
         return CommandComponent.<C, MessageChannel>builder().parser(channelParser(modes));
     }
-
-    private final Set<ParserMode> modes;
 
     /**
      * Construct a new channel parser.
      *
      * @param modes parser modes to use
      */
-    public ChannelParser(final @NonNull Set<ParserMode> modes) {
-        if (modes.isEmpty()) {
-            throw new IllegalArgumentException("At least one parsing mode is required");
-        }
-
-        this.modes = modes;
-    }
-
-    /**
-     * Get the modes enabled on the parser
-     *
-     * @return Set of Modes
-     */
-    public @NotNull Set<ParserMode> getModes() {
-        return this.modes;
-    }
-
-
-    public enum ParserMode {
-        MENTION,
-        ID,
-        NAME
+    public ChannelParser(final @NonNull Set<DiscordParserMode> modes) {
+        super(modes);
     }
 
     @Override
-    public @NonNull ArgumentParseResult<MessageChannel> parse(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull CommandInput commandInput
-    ) {
-        final String input = commandInput.peekString();
-
-        if (!commandContext.contains("MessageReceivedEvent")) {
+    protected @Nullable ArgumentParseResult<MessageChannel> preProcess(final @NonNull CommandContext<C> context) {
+        if (!context.contains("MessageReceivedEvent")) {
             return ArgumentParseResult.failure(new IllegalStateException(
                     "MessageReceivedEvent was not in the command context."
             ));
         }
 
-        final MessageReceivedEvent event = commandContext.get("MessageReceivedEvent");
-        Exception exception = null;
-
+        final MessageReceivedEvent event = context.get("MessageReceivedEvent");
         if (!event.isFromGuild()) {
             return ArgumentParseResult.failure(new IllegalArgumentException("Channel arguments can only be parsed in guilds"));
         }
 
-        if (this.modes.contains(ParserMode.MENTION)) {
-            if (input.startsWith("<#") && input.endsWith(">")) {
-                final String id = input.substring(2, input.length() - 1);
-
-                try {
-                    final ArgumentParseResult<MessageChannel> channel = this.channelFromId(event, input, id);
-                    commandInput.readString();
-                    return channel;
-                } catch (final ChannelNotFoundParseException | NumberFormatException e) {
-                    exception = e;
-                }
-            } else {
-                exception = new IllegalArgumentException(
-                        String.format("Input '%s' is not a channel mention.", input)
-                );
-            }
-        }
-
-        if (this.modes.contains(ParserMode.ID)) {
-            try {
-                final ArgumentParseResult<MessageChannel> result = this.channelFromId(event, input, input);
-                commandInput.readString();
-                return result;
-            } catch (final ChannelNotFoundParseException | NumberFormatException e) {
-                exception = e;
-            }
-        }
-
-        if (this.modes.contains(ParserMode.NAME)) {
-            final List<TextChannel> channels = event.getGuild().getTextChannelsByName(input, true);
-
-            if (channels.isEmpty()) {
-                exception = new ChannelNotFoundParseException(input);
-            } else if (channels.size() > 1) {
-                exception = new TooManyChannelsFoundParseException(input);
-            } else {
-                commandInput.readString();
-                return ArgumentParseResult.success(channels.get(0));
-            }
-        }
-
-        assert exception != null;
-        return ArgumentParseResult.failure(exception);
+        return null;
     }
 
-    private @NonNull ArgumentParseResult<MessageChannel> channelFromId(
-            final @NonNull MessageReceivedEvent event,
-            final @NonNull String input,
-            final @NonNull String id
-    )
-            throws ChannelNotFoundParseException, NumberFormatException {
-        try {
-            final MessageChannel channel = event.getGuild().getTextChannelById(id);
-
-            if (channel == null) {
-                throw new ChannelNotFoundParseException(input);
-            }
-
-            return ArgumentParseResult.success(channel);
-        } catch (final CompletionException e) {
-            if (e.getCause().getClass().equals(ErrorResponseException.class)
-                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
-                //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
-                throw new ChannelNotFoundParseException(input);
-            }
-            throw e;
-        }
-    }
-
-
-    public static class ChannelParseException extends IllegalArgumentException {
-
-        private static final long serialVersionUID = 2724288304060572202L;
-        private final String input;
-
-        /**
-         * Construct a new channel parse exception
-         *
-         * @param input String input
-         */
-        public ChannelParseException(final @NonNull String input) {
-            this.input = input;
-        }
-
-        /**
-         * Get the users input
-         *
-         * @return users input
-         */
-        public final @NonNull String input() {
-            return this.input;
-        }
-    }
-
-
-    public static final class TooManyChannelsFoundParseException extends ChannelParseException {
-
-        private static final long serialVersionUID = -507783063742841507L;
-
-        /**
-         * Construct a new channel parse exception
-         *
-         * @param input String input
-         */
-        public TooManyChannelsFoundParseException(final @NonNull String input) {
-            super(input);
-        }
-
-        @Override
-        public @NonNull String getMessage() {
-            return String.format("Too many channels found for '%s'.", input());
-        }
-    }
-
-
-    public static final class ChannelNotFoundParseException extends ChannelParseException {
-
-        private static final long serialVersionUID = -8299458048947528494L;
-
-        /**
-         * Construct a new channel parse exception
-         *
-         * @param input String input
-         */
-        public ChannelNotFoundParseException(final @NonNull String input) {
-            super(input);
-        }
-
-        @Override
-        public @NonNull String getMessage() {
-            return String.format("Channel not found for '%s'.", input());
-        }
+    @Override
+    protected @NonNull DiscordRepository<Guild, MessageChannel> repository(final @NonNull CommandContext<C> context) {
+        final MessageReceivedEvent event = context.get("MessageReceivedEvent");
+        return new JDAChannelRepository(event.getGuild());
     }
 }

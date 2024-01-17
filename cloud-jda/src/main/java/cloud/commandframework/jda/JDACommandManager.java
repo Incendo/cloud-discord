@@ -60,6 +60,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.discord.legacy.parser.DiscordParserMode;
 
 /**
  * Command manager for use with JDA
@@ -167,20 +168,20 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
         /* Register JDA Parsers */
         this.parserRegistry().registerParserSupplier(TypeToken.get(User.class), parserParameters ->
                 new UserParser<>(
-                        EnumSet.allOf(UserParser.ParserMode.class),
+                        EnumSet.allOf(DiscordParserMode.class),
                         UserParser.Isolation.GLOBAL
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(Member.class), parserParameters ->
                 new MemberParser<>(
-                        EnumSet.allOf(MemberParser.ParserMode.class)
+                        EnumSet.allOf(DiscordParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(MessageChannel.class), parserParameters ->
                 new ChannelParser<>(
-                        EnumSet.allOf(ChannelParser.ParserMode.class)
+                        EnumSet.allOf(DiscordParserMode.class)
                 ));
         this.parserRegistry().registerParserSupplier(TypeToken.get(Role.class), parserParameters ->
                 new RoleParser<>(
-                        EnumSet.allOf(RoleParser.ParserMode.class)
+                        EnumSet.allOf(DiscordParserMode.class)
                 ));
 
         // No "native" command system means that we can delete commands just fine.
