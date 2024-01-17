@@ -25,31 +25,31 @@ package cloud.commandframework.jda.parsers;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import java.util.List;
+import cloud.commandframework.jda.repository.JDARoleRepository;
 import java.util.Set;
-import java.util.concurrent.CompletionException;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.discord.legacy.parser.DiscordParserMode;
+import org.incendo.cloud.discord.legacy.parser.DiscordRoleParser;
+import org.incendo.cloud.discord.legacy.repository.DiscordRepository;
 
 /**
- * Command Argument for {@link net.dv8tion.jda.api.entities.Role}
+ * Command Argument for {@link Role}
  *
  * @param <C> Command sender type
  */
 @SuppressWarnings("unused")
-public final class RoleParser<C> implements ArgumentParser<C, Role> {
+@API(status = API.Status.STABLE, since = "2.0.0")
+public final class RoleParser<C> extends DiscordRoleParser<C, Guild, Role> {
 
     /**
-     * Creates a new server parser.
+     * Creates a new role parser.
      *
      * @param <C> command sender type
      * @param modes parser modes to use
@@ -57,7 +57,7 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> @NonNull ParserDescriptor<C, Role> roleParser(final @NonNull Set<ParserMode> modes) {
+    public static <C> @NonNull ParserDescriptor<C, Role> roleParser(final @NonNull Set<DiscordParserMode> modes) {
         return ParserDescriptor.of(new RoleParser<>(modes), Role.class);
     }
 
@@ -70,188 +70,36 @@ public final class RoleParser<C> implements ArgumentParser<C, Role> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, Role> roleComponent(final @NonNull Set<ParserMode> modes) {
+    public static <C> CommandComponent.@NonNull Builder<C, Role> roleComponent(final @NonNull Set<DiscordParserMode> modes) {
         return CommandComponent.<C, Role>builder().parser(roleParser(modes));
     }
-
-    private final Set<ParserMode> modes;
 
     /**
      * Construct a new role parser.
      *
      * @param modes parser modules to use
      */
-    public RoleParser(final @NonNull Set<ParserMode> modes) {
-        this.modes = modes;
+    public RoleParser(final @NonNull Set<DiscordParserMode> modes) {
+        super(modes);
     }
-
-    /**
-     * Get the modes enabled on the parser
-     *
-     * @return Set of Modes
-     */
-    public @NotNull Set<ParserMode> getModes() {
-        return this.modes;
-    }
-
-
-    public enum ParserMode {
-        MENTION,
-        ID,
-        NAME
-    }
-
 
     @Override
-    public @NonNull ArgumentParseResult<Role> parse(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull CommandInput commandInput
-    ) {
-        final String input = commandInput.peekString();
-
-        if (!commandContext.contains("MessageReceivedEvent")) {
+    protected @Nullable ArgumentParseResult<Role> preProcess(@NonNull final CommandContext<C> context) {
+        if (!context.contains("MessageReceivedEvent")) {
             return ArgumentParseResult.failure(new IllegalStateException(
                     "MessageReceivedEvent was not in the command context."
             ));
         }
-
-        final MessageReceivedEvent event = commandContext.get("MessageReceivedEvent");
-        Exception exception = null;
-
+        final MessageReceivedEvent event = context.get("MessageReceivedEvent");
         if (!event.isFromGuild()) {
             return ArgumentParseResult.failure(new IllegalArgumentException("Role arguments can only be parsed in guilds"));
         }
-
-        if (this.modes.contains(ParserMode.MENTION)) {
-            if (input.startsWith("<@&") && input.endsWith(">")) {
-                final String id = input.substring(3, input.length() - 1);
-
-                try {
-                    final ArgumentParseResult<Role> role = this.roleFromId(event, input, id);
-                    commandInput.readString();
-                    return role;
-                } catch (final RoleNotFoundParseException | NumberFormatException e) {
-                    exception = e;
-                }
-            } else {
-                exception = new IllegalArgumentException(
-                        String.format("Input '%s' is not a role mention.", input)
-                );
-            }
-        }
-
-        if (this.modes.contains(ParserMode.ID)) {
-            try {
-                final ArgumentParseResult<Role> result = this.roleFromId(event, input, input);
-                commandInput.readString();
-                return result;
-            } catch (final RoleNotFoundParseException | NumberFormatException e) {
-                exception = e;
-            }
-        }
-
-        if (this.modes.contains(ParserMode.NAME)) {
-            final List<Role> roles = event.getGuild().getRolesByName(input, true);
-
-            if (roles.isEmpty()) {
-                exception = new RoleNotFoundParseException(input);
-            } else if (roles.size() > 1) {
-                exception = new TooManyRolesFoundParseException(input);
-            } else {
-                commandInput.readString();
-                return ArgumentParseResult.success(roles.get(0));
-            }
-        }
-
-        assert exception != null;
-        return ArgumentParseResult.failure(exception);
+        return null;
     }
 
-    private @NonNull ArgumentParseResult<Role> roleFromId(
-            final @NonNull MessageReceivedEvent event,
-            final @NonNull String input,
-            final @NonNull String id
-    )
-            throws RoleNotFoundParseException, NumberFormatException {
-        try {
-            final Role role = event.getGuild().getRoleById(id);
-
-            if (role == null) {
-                throw new RoleNotFoundParseException(input);
-            }
-
-            return ArgumentParseResult.success(role);
-        } catch (final CompletionException e) {
-            if (e.getCause().getClass().equals(ErrorResponseException.class)
-                    && ((ErrorResponseException) e.getCause()).getErrorResponse() == ErrorResponse.UNKNOWN_ROLE) {
-                //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
-                throw new RoleNotFoundParseException(input);
-            }
-            throw e;
-        }
-    }
-
-    public static class RoleParseException extends IllegalArgumentException {
-
-        private static final long serialVersionUID = -2451548379508062135L;
-        private final String input;
-
-        /**
-         * Construct a new role parse exception
-         *
-         * @param input String input
-         */
-        public RoleParseException(final @NonNull String input) {
-            this.input = input;
-        }
-
-        /**
-         * Get the users input
-         *
-         * @return users input
-         */
-        public final @NonNull String input() {
-            return this.input;
-        }
-    }
-
-
-    public static final class TooManyRolesFoundParseException extends RoleParseException {
-
-        private static final long serialVersionUID = -8604082973199995006L;
-
-        /**
-         * Construct a new role parse exception
-         *
-         * @param input String input
-         */
-        public TooManyRolesFoundParseException(final @NonNull String input) {
-            super(input);
-        }
-
-        @Override
-        public @NonNull String getMessage() {
-            return String.format("Too many roles found for '%s'.", input());
-        }
-    }
-
-
-    public static final class RoleNotFoundParseException extends RoleParseException {
-
-        private static final long serialVersionUID = 7931804739792920510L;
-
-        /**
-         * Construct a new role parse exception
-         *
-         * @param input String input
-         */
-        public RoleNotFoundParseException(final @NonNull String input) {
-            super(input);
-        }
-
-        @Override
-        public @NonNull String getMessage() {
-            return String.format("Role not found for '%s'.", input());
-        }
+    @Override
+    protected @NonNull DiscordRepository<Guild, Role> repository(@NonNull final CommandContext<C> context) {
+        final MessageReceivedEvent event = context.get("MessageReceivedEvent");
+        return new JDARoleRepository(event.getGuild());
     }
 }
