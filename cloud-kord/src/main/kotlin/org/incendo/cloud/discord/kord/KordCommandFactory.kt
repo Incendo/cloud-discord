@@ -21,30 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import dev.kord.core.Kord
+import dev.kord.core.entity.Guild
+import org.apiguardian.api.API
+import org.incendo.cloud.discord.slash.CommandScopePredicate
 
+/**
+ * Factory that creates commands.
+ *
+ * @param C command sender type
+ * @since 1.0.0
+ */
 @API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+public interface KordCommandFactory<C> {
 
     /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
+     * Predicate that determines whether a command is applicable in a given scope.
      */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
+    public var commandScopePredicate: CommandScopePredicate<C>
 
     /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
+     * Creates the commands for the given [guild].
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    public suspend fun createGuildCommands(guild: Guild)
+
+    /**
+     * Deletes the commands from the given [guild].
+     */
+    public suspend fun deleteGuildCommands(guild: Guild)
+
+    /**
+     * Creates global commands using the given [kord] instance.
+     */
+    public suspend fun createGlobalCommands(kord: Kord)
+
+    /**
+     * Deletes global commands from the given [kord] instance.
+     */
+    public suspend fun deleteGlobalCommands(kord: Kord)
 }

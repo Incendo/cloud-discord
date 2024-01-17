@@ -21,30 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.slash.annotations;
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
 
+/**
+ * Annotation equivalent of {@link org.incendo.cloud.discord.slash.CommandScope}.
+ *
+ * <p>This requires the installation of {@link CommandScopeBuilderModifier}.</p>
+ *
+ * @since 1.0.0
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 @API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+public @interface CommandScope {
 
     /**
-     * Creates the JDA commands.
+     * Returns the guilds that the command should exist in.
      *
-     * @param scope current scope
-     * @return created commands
-     */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
-
-    /**
-     * Sets the command scope predicate of the instance.
+     * <p>Leave this empty to make the command globally scoped. Set to {@code -1} to make it apply to all guilds.</p>
      *
-     * @param predicate new predicate
+     * @return guilds that the command should exist in
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    long[] guilds() default {};
 }

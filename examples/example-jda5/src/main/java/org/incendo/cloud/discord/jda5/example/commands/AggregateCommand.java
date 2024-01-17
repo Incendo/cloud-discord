@@ -58,7 +58,7 @@ public final class AggregateCommand implements Example {
                             final Hug hug = context.get("hug");
 
                             interaction.replyCallback().reply("You hug " + hug.recipient().getAsMention()
-                                    + " " + hug.number() + " times!").queue();
+                                    + " " + hug.number() + " time(s)!").queue();
                         })
         );
     }

@@ -50,15 +50,39 @@ public final class DiscordPermission implements Permission {
         return new DiscordPermission(permission);
     }
 
-    private final long permission;
+    /**
+     * Creates a new Discord permission.
+     *
+     * @param permission permission
+     * @return the created permission
+     */
+    public static @NonNull DiscordPermission of(final @NonNull String permission) {
+        return new DiscordPermission(permission);
+    }
+
+    /**
+     * Creates a new Discord permission.
+     *
+     * @param permission permission
+     * @return the created permission
+     */
+    public static @NonNull DiscordPermission discordPermission(final @NonNull String permission) {
+        return new DiscordPermission(permission);
+    }
+
+    private final String permission;
 
     private DiscordPermission(final long permission) {
+        this.permission = Long.toString(permission);
+    }
+
+    private DiscordPermission(final @NonNull String permission) {
         this.permission = permission;
     }
 
     @Override
     public @NonNull String permissionString() {
-        return Long.toString(this.permission);
+        return this.permission;
     }
 
     /**
@@ -67,6 +91,6 @@ public final class DiscordPermission implements Permission {
      * @return permission
      */
     public long permission() {
-        return this.permission;
+        return Long.parseUnsignedLong(this.permission);
     }
 }

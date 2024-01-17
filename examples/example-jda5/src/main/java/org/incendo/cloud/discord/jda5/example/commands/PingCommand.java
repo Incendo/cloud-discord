@@ -30,6 +30,7 @@ import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.jda5.ReplySetting;
 import org.incendo.cloud.discord.jda5.example.Example;
+import org.incendo.cloud.discord.slash.CommandScope;
 
 import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 
@@ -48,6 +49,7 @@ public final class PingCommand implements Example {
         commandManager.command(
                 commandManager.commandBuilder("ping", Description.of("A ping command"))
                         .apply(ReplySetting.defer(true)) // Defer the response & make the response ephemeral.
+                        .apply(CommandScope.guilds()) // You may only ping in guilds!
                         .required(COMPONENT_MESSAGE, greedyStringParser(), Description.of("The message"))
                         .handler(context -> {
                             final JDAInteraction interaction = context.sender();

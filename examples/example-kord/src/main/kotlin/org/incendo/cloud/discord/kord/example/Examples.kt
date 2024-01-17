@@ -21,30 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord.example
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.incendo.cloud.discord.kord.KordCommandManager
+import org.incendo.cloud.discord.kord.KordInteraction
+import org.incendo.cloud.discord.kord.example.commands.AggregateCommand
+import org.incendo.cloud.discord.kord.example.commands.AnnotatedCommands
+import org.incendo.cloud.discord.kord.example.commands.PingCommand
 
-@API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+private val logger = KotlinLogging.logger {}
+
+/**
+ * Class that registers the examples.
+ *
+ * You can find the active examples in [examples].
+ */
+public class Examples(private val commandManager: KordCommandManager<KordInteraction>) {
+
+    private val examples: List<Example> = listOf(
+        AggregateCommand(),
+        AnnotatedCommands(),
+        PingCommand()
+    )
 
     /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
+     * Registers the example commands.
      */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
-
-    /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
-     */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    public fun registerExamples() {
+        logger.info { "Registering examples:" }
+        examples.forEach { example ->
+            logger.info { "- Registering example: ${example::class.simpleName}" }
+            example.register(commandManager)
+        }
+    }
 }

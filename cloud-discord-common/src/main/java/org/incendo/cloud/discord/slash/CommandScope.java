@@ -104,7 +104,7 @@ public interface CommandScope<C> extends Command.Builder.Applicable<C> {
 
         @Override
         public boolean overlaps(final @NonNull CommandScope<C> scope) {
-            return true;
+            return scope instanceof Global;
         }
     }
 
