@@ -29,7 +29,7 @@ kotlinLogging = "6.0.3"
 jupiterEngine = "5.10.1"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
-mockitoKotlin = "4.1.0"
+mockitoKotlin = "5.2.1"
 truth = "1.2.0"
 
 [libraries]
