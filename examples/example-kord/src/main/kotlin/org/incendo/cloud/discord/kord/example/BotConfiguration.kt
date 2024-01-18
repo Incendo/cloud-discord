@@ -21,30 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord.example
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import java.io.File
+import java.io.FileReader
+import java.util.Properties
 
-@API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
-
-    /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
-     */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
+/**
+ * Configuration for the example bot.
+ */
+public interface BotConfiguration {
 
     /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
+     * The bot token.
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    public val token: String
+}
+
+internal class PropertiesBotConfiguration private constructor(private val properties: Properties) : BotConfiguration {
+
+    internal constructor(file: File) : this(Properties()) {
+        FileReader(file).use(properties::load)
+    }
+
+    override val token: String
+        get() = properties.getProperty("token")
 }

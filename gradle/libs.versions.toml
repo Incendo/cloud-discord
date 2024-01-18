@@ -7,7 +7,11 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 cloud-build-logic = "0.0.3"
 ktlint = "1.0.1"
 checkstyle = "10.12.5"
+
+# Kotlin
 kotlin = "1.9.22"
+dokka = "1.9.10"
+coroutines = "1.7.3"
 
 # Cloud
 cloud = "2.0.0-SNAPSHOT"
@@ -18,20 +22,27 @@ javacord = "3.8.0"
 jda = "4.4.1_353"
 jda5 = "5.0.0-beta.19"
 logback = "1.4.14"
+kord = "0.13.0"
+kotlinLogging = "6.0.3"
 
 # Test
 jupiterEngine = "5.10.1"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
+mockitoKotlin = "4.1.0"
 truth = "1.2.0"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
 gradleKotlinJvm = { group = "org.jetbrains.kotlin.jvm", name = "org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
+gradleDokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
 
 # Cloud
 cloud-core = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
 cloud-annotations = { group = "cloud.commandframework", name = "cloud-annotations", version.ref = "cloud" }
+cloud-kotlin-coroutines = { group = "cloud.commandframework", name = "cloud-kotlin-coroutines", version.ref = "cloud" }
+cloud-kotlin-coroutines-annotations = { group = "cloud.commandframework", name = "cloud-kotlin-coroutines-annotations", version.ref = "cloud"}
+cloud-kotlin-extensions = { group = "cloud.commandframework", name = "cloud-kotlin-extensions", version.ref = "cloud" }
 
 # External
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
@@ -40,14 +51,21 @@ jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
 jda5 = { group = "net.dv8tion", name = "JDA", version.ref = "jda5" }
 logback-core = { group = "ch.qos.logback", name = "logback-core", version.ref = "logback" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+kord = { group = "dev.kord", name = "kord-core", version.ref = "kord" }
+kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
 
+# Kotlin
+coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutinesJdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "coroutines" }
 
 # Test
 jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "jupiterEngine" }
 jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "jupiterEngine" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
 mockito-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockitoJupiter" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 truth-java8 = { group = "com.google.truth.extensions", name = "truth-java8-extension", version.ref = "truth" }
 
 [bundles]
+coroutines = ["coroutinesCore", "coroutinesJdk8"]

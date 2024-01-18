@@ -232,8 +232,15 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
                         autoComplete = false;
                     }
 
+                    final String innerDescription;
+                    if (innerComponent.description().isEmpty()) {
+                        innerDescription = innerComponent.name();
+                    } else {
+                        innerDescription = innerComponent.description().textDescription();
+                    }
+
                     return (DiscordOption<C>) ImmutableVariable.<C>builder().name(innerComponent.name())
-                            .description(description)
+                            .description(innerDescription)
                             .type(optionType)
                             .required(innerComponent.required())
                             .autocomplete(autoComplete)

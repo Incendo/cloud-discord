@@ -21,30 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import cloud.commandframework.setting.Setting
+import org.apiguardian.api.API
 
+/**
+ * Kord-specific settings.
+ */
 @API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+public enum class KordSetting : Setting {
+    /**
+     * Whether commands should be automatically registered per-guild. Defaults to `true`.
+     */
+    AUTO_REGISTER_GUILD,
 
     /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
+     * Whether commands should be automatically registered globally. Defaults to `true`.
      */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
+    AUTO_REGISTER_GLOBAL,
 
     /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
+     * Whether existing commands should be cleared. Defaults to `true`.
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    CLEAR_EXISTING
 }

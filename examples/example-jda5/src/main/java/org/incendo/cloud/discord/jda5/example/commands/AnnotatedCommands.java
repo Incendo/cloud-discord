@@ -42,10 +42,10 @@ import org.immutables.value.Value;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
-import org.incendo.cloud.discord.jda5.annotations.CommandScopeBuilderModifier;
 import org.incendo.cloud.discord.jda5.annotations.ReplySetting;
 import org.incendo.cloud.discord.jda5.annotations.ReplySettingBuilderModifier;
 import org.incendo.cloud.discord.jda5.example.Example;
+import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier;
 
 /**
  * Example showcasing how to use cloud-annotations with cloud-jda5.

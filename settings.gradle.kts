@@ -34,6 +34,9 @@ include(":cloud-discord-common")
 include(":cloud-javacord")
 include(":cloud-jda")
 include(":cloud-jda5")
+include(":cloud-kord")
 
 include("examples/example-jda5")
 findProject(":examples/example-jda5")?.name = "example-jda5"
+include("examples/example-kord")
+findProject(":examples/example-kord")?.name = "example-kord"

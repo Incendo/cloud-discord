@@ -21,30 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord.example
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import cloud.commandframework.execution.ExecutionCoordinator
+import dev.kord.core.Kord
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.incendo.cloud.discord.kord.KordCommandManager
+import java.io.File
 
-@API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+private val logger = KotlinLogging.logger {}
 
-    /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
-     */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
+/**
+ * Example kord bot.
+ */
+public class ExampleBot(public val configuration: BotConfiguration) {
 
     /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
+     * Starts the bot.
      */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    public suspend fun start() {
+        logger.info { "Starting the example bot..." }
+        val commandManager = KordCommandManager(ExecutionCoordinator.simpleCoordinator()) {
+            it
+        }
+
+        Examples(commandManager).registerExamples()
+
+        logger.info { "Logging into Kord..." }
+        val kord = Kord(configuration.token)
+
+        logger.info { "Installing the event listener..." }
+        commandManager.installListener(kord)
+
+        kord.login()
+    }
+}
+
+/**
+ * Main method.
+ */
+public suspend fun main() {
+    ExampleBot(PropertiesBotConfiguration(File("./bot.properties"))).start()
 }

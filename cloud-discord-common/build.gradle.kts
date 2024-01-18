@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
     api(libs.cloud.core)
+    implementation(libs.cloud.annotations)
 }

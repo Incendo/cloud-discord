@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5.annotations;
+package org.incendo.cloud.discord.slash.annotations;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.annotations.AnnotationParser;

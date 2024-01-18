@@ -21,30 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.discord.jda5;
+package org.incendo.cloud.discord.kord.example
 
-import java.util.Collection;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.apiguardian.api.API;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.slash.CommandScope;
-import org.incendo.cloud.discord.slash.CommandScopePredicate;
+import org.incendo.cloud.discord.kord.KordCommandManager
+import org.incendo.cloud.discord.kord.KordInteraction
 
-@API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDACommandFactory<C> {
+/**
+ * An example.
+ */
+public interface Example {
 
     /**
-     * Creates the JDA commands.
-     *
-     * @param scope current scope
-     * @return created commands
+     * Registers the example using the given [commandManager].
      */
-    @NonNull Collection<@NonNull CommandData> createCommands(@NonNull CommandScope<C> scope);
-
-    /**
-     * Sets the command scope predicate of the instance.
-     *
-     * @param predicate new predicate
-     */
-    void commandScopePredicate(@NonNull CommandScopePredicate<C> predicate);
+    public fun register(commandManager: KordCommandManager<KordInteraction>)
 }

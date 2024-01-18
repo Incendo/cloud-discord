@@ -26,6 +26,7 @@ package org.incendo.cloud.discord.slash;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
@@ -69,9 +70,9 @@ public interface DiscordChoices<C, T> extends DiscordChoiceProvider<C, T> {
      * @param choices choices
      * @return the created instance
      */
-    static <C> @NonNull DiscordChoices<C, Integer> integers(final @NonNull Collection<@NonNull Integer> choices) {
+    static <C> @NonNull DiscordChoices<C, Integer> integers(final @NonNull Iterable<@NonNull Integer> choices) {
         return DiscordChoicesImpl.of(
-                choices.stream()
+                StreamSupport.stream(choices.spliterator(), false)
                         .map(integer -> DiscordOptionChoice.of(Integer.toString(integer), integer))
                         .collect(Collectors.toList())
         );
@@ -99,9 +100,9 @@ public interface DiscordChoices<C, T> extends DiscordChoiceProvider<C, T> {
      * @param choices choices
      * @return the created instance
      */
-    static <C> @NonNull DiscordChoices<C, Double> doubles(final @NonNull Collection<@NonNull Double> choices) {
+    static <C> @NonNull DiscordChoices<C, Double> doubles(final @NonNull Iterable<@NonNull Double> choices) {
         return DiscordChoicesImpl.of(
-                choices.stream()
+                StreamSupport.stream(choices.spliterator(), false)
                         .map(number -> DiscordOptionChoice.of(Double.toString(number), number))
                         .collect(Collectors.toList())
         );
@@ -129,9 +130,9 @@ public interface DiscordChoices<C, T> extends DiscordChoiceProvider<C, T> {
      * @param choices choices
      * @return the created instance
      */
-    static <C> @NonNull DiscordChoices<C, String> strings(final @NonNull Collection<@NonNull String> choices) {
+    static <C> @NonNull DiscordChoices<C, String> strings(final @NonNull Iterable<@NonNull String> choices) {
         return DiscordChoicesImpl.of(
-                choices.stream()
+                StreamSupport.stream(choices.spliterator(), false)
                         .map(string -> DiscordOptionChoice.of(string, string))
                         .collect(Collectors.toList())
         );

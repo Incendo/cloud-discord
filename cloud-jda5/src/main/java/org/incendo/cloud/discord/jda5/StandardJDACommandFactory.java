@@ -43,6 +43,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.CommandScope;
+import org.incendo.cloud.discord.slash.CommandScopePredicate;
 import org.incendo.cloud.discord.slash.DiscordCommand;
 import org.incendo.cloud.discord.slash.DiscordCommandFactory;
 import org.incendo.cloud.discord.slash.DiscordOption;
@@ -129,6 +130,8 @@ final class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
             if (permission instanceof DiscordPermission) {
                 data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(((DiscordPermission) permission).permission()));
             }
+
+            data.setGuildOnly(rootScope instanceof CommandScope.Guilds);
 
             commands.add(data);
         }
