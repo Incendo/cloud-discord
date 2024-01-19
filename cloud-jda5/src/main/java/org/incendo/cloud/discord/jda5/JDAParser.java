@@ -24,10 +24,11 @@
 package org.incendo.cloud.discord.jda5;
 
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -36,10 +37,8 @@ import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.discord.jda5.dummy.DummyChannel;
-import org.incendo.cloud.discord.jda5.dummy.DummyMentionable;
-import org.incendo.cloud.discord.jda5.dummy.DummyRole;
-import org.incendo.cloud.discord.jda5.dummy.DummyUser;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.discord.slash.NullableParser;
 
 /**
  * A parser which wraps a JDA {@link OptionMapping}.
@@ -48,9 +47,8 @@ import org.incendo.cloud.discord.jda5.dummy.DummyUser;
  * @param <T> JDA type
  * @since 1.0.0
  */
-@FunctionalInterface
 @API(status = API.Status.STABLE, since = "1.0.0")
-public interface JDAParser<C, T> extends ArgumentParser<C, T> {
+public final class JDAParser<C, T> extends NullableParser<C, T> {
 
     /**
      * Returns a parser which extracts a {@link User}.
@@ -58,8 +56,8 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
      * @param <C> command sender type
      * @return the parser
      */
-    static <C> @NonNull ParserDescriptor<C, User> userParser() {
-        return ParserDescriptor.of((JDAParser<C, User>) mapping -> ArgumentParseResult.success(mapping.getAsUser()), User.class);
+    public static <C> @NonNull ParserDescriptor<C, User> userParser() {
+        return createParser(OptionMapping::getAsUser, User.class);
     }
 
     /**
@@ -68,11 +66,8 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
      * @param <C> command sender type
      * @return the parser
      */
-    static <C> @NonNull ParserDescriptor<C, Channel> channelParser() {
-        return ParserDescriptor.of(
-                (JDAParser<C, Channel>) mapping -> ArgumentParseResult.success(mapping.getAsChannel()),
-                Channel.class
-        );
+    public static <C> @NonNull ParserDescriptor<C, Channel> channelParser() {
+        return createParser(OptionMapping::getAsChannel, Channel.class);
     }
 
     /**
@@ -81,11 +76,8 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
      * @param <C> command sender type
      * @return the parser
      */
-    static <C> @NonNull ParserDescriptor<C, Role> roleParser() {
-        return ParserDescriptor.of(
-                (JDAParser<C, Role>) mapping -> ArgumentParseResult.success(mapping.getAsRole()),
-                Role.class
-        );
+    public static <C> @NonNull ParserDescriptor<C, Role> roleParser() {
+        return createParser(OptionMapping::getAsRole, Role.class);
     }
 
     /**
@@ -94,11 +86,8 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
      * @param <C> command sender type
      * @return the parser
      */
-    static <C> @NonNull ParserDescriptor<C, IMentionable> mentionableParser() {
-        return ParserDescriptor.of(
-                (JDAParser<C, IMentionable>) mapping -> ArgumentParseResult.success(mapping.getAsMentionable()),
-                IMentionable.class
-        );
+    public static <C> @NonNull ParserDescriptor<C, IMentionable> mentionableParser() {
+        return createParser(OptionMapping::getAsMentionable, IMentionable.class);
     }
 
     /**
@@ -107,43 +96,38 @@ public interface JDAParser<C, T> extends ArgumentParser<C, T> {
      * @param <C> command sender type
      * @return the parser
      */
-    static <C> @NonNull ParserDescriptor<C, Message.Attachment> attachmentParser() {
-        return ParserDescriptor.of(
-                (JDAParser<C, Message.Attachment>) mapping -> ArgumentParseResult.success(mapping.getAsAttachment()),
-                Message.Attachment.class
-        );
+    public static <C> @NonNull ParserDescriptor<C, Message.Attachment> attachmentParser() {
+        return createParser(OptionMapping::getAsAttachment, Message.Attachment.class);
     }
 
-    /**
-     * Returns the result of extracting the argument from the given {@code mapping}.
-     *
-     * @param mapping JDA option mapping
-     * @return the result
-     */
-    @NonNull ArgumentParseResult<T> extract(@NonNull OptionMapping mapping);
+    private static <C, T> @NonNull ParserDescriptor<C, T> createParser(
+            final @NonNull Function<@NonNull OptionMapping, @Nullable T> extractor,
+            final @NonNull Class<T> clazz
+    ) {
+        return ParserDescriptor.of(new JDAParser<>(extractor), clazz);
+    }
+
+    private final Function<@NonNull OptionMapping, @Nullable T> extractor;
+
+    private JDAParser(final @NonNull Function<@NonNull OptionMapping, @Nullable T> extractor) {
+        this.extractor = extractor;
+    }
 
     @Override
-    @SuppressWarnings("unchecked")
-    default @NonNull ArgumentParseResult<@NonNull T> parse(
-            final @NonNull CommandContext<@NonNull C> commandContext,
-            final @NonNull CommandInput commandInput
+    public @NonNull CompletableFuture<@Nullable ArgumentParseResult<T>> parseNullable(
+            @NonNull final CommandContext<@NonNull C> commandContext,
+            @NonNull final CommandInput commandInput
     ) {
         final JDAInteraction interaction = commandContext.get(JDA5CommandManager.CONTEXT_JDA_INTERACTION);
-        final OptionMapping mapping = interaction.getOptionMapping(commandInput.readString()).orElse(null);
-        try {
-            return this.extract(mapping);
-        } catch (final Exception e) {
-            if (commandContext.isSuggestions()) {
-                switch (mapping.getType()) {
-                    case USER: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyUser.dummy());
-                    case CHANNEL: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyChannel.dummy());
-                    case ROLE: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyRole.dummy());
-                    case MENTIONABLE: return (ArgumentParseResult<T>) ArgumentParseResult.success(DummyMentionable.dummy());
-                    // TODO(City): Support attachments too.
-                    default: break;
-                }
-            }
-            return ArgumentParseResult.failure(e);
-        }
+        return interaction.getOptionMapping(commandInput.readString())
+                .map(mapping -> {
+                    try {
+                        return this.extractor.apply(mapping);
+                    } catch (final IllegalStateException ignored) {
+                        return null;
+                    }
+                })
+                .map(ArgumentParseResult::successFuture)
+                .orElseGet(() -> CompletableFuture.completedFuture(null));
     }
 }

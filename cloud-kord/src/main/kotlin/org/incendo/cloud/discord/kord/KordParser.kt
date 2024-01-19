@@ -27,18 +27,17 @@ import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ParserDescriptor
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.context.CommandInput
-import cloud.commandframework.kotlin.coroutines.SuspendingArgumentParser
-import cloud.commandframework.kotlin.coroutines.asParserDescriptor
 import dev.kord.core.entity.Attachment
 import dev.kord.core.entity.Entity
 import dev.kord.core.entity.Role
 import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.Channel
-import dev.kord.core.entity.interaction.GuildInteraction
 import dev.kord.core.entity.interaction.InteractionCommand
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.future
 import org.apiguardian.api.API
-import kotlin.NullPointerException
+import org.incendo.cloud.discord.slash.NullableParser
+import java.util.concurrent.CompletableFuture
 
 /**
  * A parser which wraps a Kord option value.
@@ -48,87 +47,67 @@ import kotlin.NullPointerException
  * @since 1.0.0
  */
 @API(status = API.Status.STABLE, since = "1.0.0")
-public fun interface KordParser<C : Any, T : Any> : SuspendingArgumentParser<C, T> {
+public data class KordParser<C : Any, T : Any> internal constructor(
+    private val extract: suspend (
+        name: String,
+        command: InteractionCommand
+    ) -> ArgumentParseResult<T>?
+) : NullableParser<C, T>() {
 
     public companion object {
 
         /**
          * Returns a parser which extracts a [User].
+         *
+         * The parsed user may not be accessed from the context during suggestion generation.
          */
-        public fun <C : Any> userParser(): ParserDescriptor<C, User> = createParser<C, User> { name, command, context ->
+        public fun <C : Any> userParser(): ParserDescriptor<C, User> = createParser<C, User> { name, command ->
             command.users[name]?.let { ArgumentParseResult.success(it) }
-                ?: context.ifSuggestion(name) {
-                    ArgumentParseResult.success(context.interaction.interactionEvent.interaction.user)
-                }
         }
 
         /**
          * Returns a parser which extracts a [Channel].
+         *
+         * The parsed channel may not be accessed from the context during suggestion generation.
          */
-        public fun <C : Any> channelParser(): ParserDescriptor<C, Channel> = createParser<C, Channel> { name, command, context ->
+        public fun <C : Any> channelParser(): ParserDescriptor<C, Channel> = createParser<C, Channel> { name, command ->
             command.channels[name]?.let { ArgumentParseResult.success(it) }
-                ?: context.ifSuggestion(name) {
-                    (context.interaction.interactionEvent as? GuildInteraction)?.channel?.asChannel()
-                        ?.let { ArgumentParseResult.success(it) }
-                }
         }
 
         /**
          * Returns a parser which extracts a [Role].
+         *
+         * The parsed role may not be accessed from the context during suggestion generation.
          */
-        public fun <C : Any> roleParser(): ParserDescriptor<C, Role> = createParser<C, Role> { name, command, context ->
+        public fun <C : Any> roleParser(): ParserDescriptor<C, Role> = createParser<C, Role> { name, command ->
             command.roles[name]?.let { ArgumentParseResult.success(it) }
-                ?: context.ifSuggestion(name) {
-                    (context.interaction.interactionEvent as? GuildInteraction)?.user?.roles?.firstOrNull()
-                        ?.let { ArgumentParseResult.success(it) }
-                }
         }
 
         /**
          * Returns a parser which extracts an [Entity].
+         *
+         * The parsed mentionable may not be accessed from the context during suggestion generation.
          */
         public fun <C : Any> mentionableParser(): ParserDescriptor<C, Entity> =
-            createParser<C, Entity> { name, command, context ->
-                command.users[name]?.let { ArgumentParseResult.success(it) }
-                    ?: context.ifSuggestion(name) {
-                        ArgumentParseResult.success(context.interaction.interactionEvent.interaction.user)
-                    }
-            }
+            createParser<C, Entity> { name, command -> command.users[name]?.let { ArgumentParseResult.success(it) } }
 
         /**
          * Returns a parser which extracts an [Attachment].
+         *
+         * The parsed attachment may not be accessed from the context during suggestion generation.
          */
         public fun <C : Any> attachmentParser(): ParserDescriptor<C, Attachment> =
-            createParser<C, Attachment> { name, command, _ ->
-                command.attachments[name]?.let { ArgumentParseResult.success(it) }
-                    ?: ArgumentParseResult.failure(NullPointerException(name))
-            }
+            createParser<C, Attachment> { name, command -> command.attachments[name]?.let { ArgumentParseResult.success(it) } }
 
-        private inline fun <C : Any, reified T : Any> createParser(parser: KordParser<C, T>): ParserDescriptor<C, T> =
-            parser.asParserDescriptor<C, T>()
-
-        // TODO(City): This is a terrible hack and should be removed.
-        private suspend inline fun <C : Any, T : Any> CommandContext<C>.ifSuggestion(
-            name: String,
-            crossinline body: suspend () -> ArgumentParseResult<T>?
-        ): ArgumentParseResult<T> {
-            val result = if (isSuggestions) {
-                body()
-            } else {
-                null
-            }
-            return result ?: ArgumentParseResult.failure(NullPointerException(name))
-        }
+        private inline fun <C : Any, reified T : Any> createParser(
+            noinline extract: suspend (name: String, command: InteractionCommand) -> ArgumentParseResult<T>?
+        ): ParserDescriptor<C, T> = ParserDescriptor.of(KordParser(extract), T::class.java)
     }
 
-    /**
-     * Returns the result of extracting the argument from the given mapping.
-     */
-    public suspend fun extract(name: String, command: InteractionCommand, context: CommandContext<C>): ArgumentParseResult<T>
-
-    override suspend fun invoke(commandContext: CommandContext<C>, commandInput: CommandInput): ArgumentParseResult<T> = extract(
-        commandInput.readString(),
-        commandContext.interaction.command,
-        commandContext
-    )
+    override fun parseNullable(
+        commandContext: CommandContext<C>,
+        commandInput: CommandInput
+    ): CompletableFuture<ArgumentParseResult<T>?> = GlobalScope.future {
+        extract(commandInput.readString(), commandContext.interaction.command)
+    }
 }

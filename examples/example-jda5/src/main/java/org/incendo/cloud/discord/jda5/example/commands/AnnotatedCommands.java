@@ -133,7 +133,7 @@ public final class AnnotatedCommands implements Example {
      * @param cat         cat that should meow
      * @param target      meow target
      */
-    @Command("cat meow <cat> <target>")
+    @Command("cat meow <target> <cat>")
     public void meow(
             final @NonNull JDAInteraction interaction,
             @Argument(suggestions = "cats") final @NonNull String cat,

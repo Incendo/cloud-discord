@@ -86,7 +86,7 @@ public data class AnnotatedCommands(
         }
     }
 
-    @Command("cat meow <cat> <target>")
+    @Command("cat meow <target> <cat>")
     public suspend fun meow(interaction: KordInteraction, @Argument(suggestions = "cats") cat: String, target: Entity) {
         interaction.deferPublicResponse().respond {
             content = "$cat meows at <@${target.id}>"
