@@ -30,7 +30,7 @@ jupiterEngine = "5.10.1"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
 mockitoKotlin = "5.2.1"
-truth = "1.2.0"
+truth = "1.3.0"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
@@ -65,7 +65,6 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 mockito-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockitoJupiter" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
-truth-java8 = { group = "com.google.truth.extensions", name = "truth-java8-extension", version.ref = "truth" }
 
 [bundles]
 coroutines = ["coroutinesCore", "coroutinesJdk8"]
