@@ -24,6 +24,7 @@
 package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.Command;
+import cloud.commandframework.types.range.Range;
 import java.util.List;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -129,7 +130,7 @@ public interface DiscordOption<C> extends Named {
          *
          * @return the range, or {@code null}
          */
-        default @Nullable Range range() {
+        default @Nullable Range<?> range() {
             return null;
         }
     }

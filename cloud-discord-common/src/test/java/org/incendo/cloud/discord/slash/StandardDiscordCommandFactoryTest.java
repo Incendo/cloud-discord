@@ -27,6 +27,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.Description;
 import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
+import cloud.commandframework.types.range.Range;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.util.TestCommandManager;
@@ -99,7 +100,7 @@ class StandardDiscordCommandFactoryTest {
                                         .type(DiscordOptionType.INTEGER)
                                         .required(true)
                                         .autocomplete(true)
-                                        .range(Range.of(1, 10))
+                                        .range(Range.intRange(1, 10))
                                         .build()
                         ).addOption(
                                 ImmutableVariable.<TestCommandSender>builder()

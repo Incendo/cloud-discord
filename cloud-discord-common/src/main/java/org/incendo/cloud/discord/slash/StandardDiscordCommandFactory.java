@@ -31,9 +31,11 @@ import cloud.commandframework.arguments.standard.DoubleParser;
 import cloud.commandframework.arguments.standard.FloatParser;
 import cloud.commandframework.arguments.standard.IntegerParser;
 import cloud.commandframework.arguments.standard.LongParser;
+import cloud.commandframework.arguments.standard.NumberParser;
 import cloud.commandframework.arguments.standard.ShortParser;
 import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.internal.CommandNode;
+import cloud.commandframework.types.range.Range;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.ArrayList;
@@ -62,48 +64,12 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     public StandardDiscordCommandFactory(final @NonNull OptionRegistry<C> optionRegistry) {
         this.optionRegistry = Objects.requireNonNull(optionRegistry, "optionRegistry");
 
-        this.registerRangeMapper(new TypeToken<ByteParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
-        this.registerRangeMapper(new TypeToken<ShortParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
-        this.registerRangeMapper(new TypeToken<IntegerParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
-        this.registerRangeMapper(new TypeToken<LongParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
-        this.registerRangeMapper(new TypeToken<FloatParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
-        this.registerRangeMapper(new TypeToken<DoubleParser<C>>() {
-        }, parser -> {
-            if (!parser.hasMin() && !parser.hasMax()) {
-                return null;
-            }
-            return Range.of(parser.min(), parser.max());
-        });
+        this.registerRangeMapper(new TypeToken<ByteParser<C>>() {});
+        this.registerRangeMapper(new TypeToken<ShortParser<C>>() {});
+        this.registerRangeMapper(new TypeToken<IntegerParser<C>>() {});
+        this.registerRangeMapper(new TypeToken<LongParser<C>>() {});
+        this.registerRangeMapper(new TypeToken<FloatParser<C>>() {});
+        this.registerRangeMapper(new TypeToken<DoubleParser<C>>() {});
     }
 
     /**
@@ -122,6 +88,18 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
         Objects.requireNonNull(mapper, "mapper");
 
         this.rangeMappers.put(GenericTypeReflector.erase(parserClass.getType()), mapper);
+    }
+
+    private <T extends Number, P extends NumberParser<C, T, ?>> void registerRangeMapper(
+            final @NonNull TypeToken<P> parserClass
+    ) {
+        final RangeMapper<C, T, P> mapper = parser -> {
+            if (!parser.hasMin() && !parser.hasMax()) {
+                return null;
+            }
+            return parser.range();
+        };
+        this.registerRangeMapper(parserClass, mapper);
     }
 
     @Override
@@ -223,7 +201,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
                 .map(innerComponent -> {
                     final DiscordOptionType optionType = this.optionRegistry.getOption(innerComponent.valueType());
                     final Collection choices = this.extractChoices(innerComponent.suggestionProvider());
-                    final Range range = this.extractRange(innerComponent.parser());
+                    final Range<?> range = this.extractRange(innerComponent.parser());
 
                     final boolean autoComplete;
                     if (choices.isEmpty()) {
@@ -251,7 +229,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private @Nullable Range extractRange(final @NonNull ArgumentParser<C, ?> parser) {
+    private @Nullable Range<?> extractRange(final @NonNull ArgumentParser<C, ?> parser) {
         final RangeMapper rangeMapper = this.rangeMappers.get(parser.getClass());
         if (rangeMapper == null) {
             return null;
