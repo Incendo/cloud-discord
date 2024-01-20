@@ -24,6 +24,7 @@
 package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.arguments.parser.ArgumentParser;
+import cloud.commandframework.types.range.Range;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -45,5 +46,5 @@ public interface RangeMapper<C, T extends Number, P extends ArgumentParser<C, T>
      * @param parser parser to map
      * @return the range, or {@code null} if no range could be extracted
      */
-    @Nullable Range map(@NonNull P parser);
+    @Nullable Range<T> map(@NonNull P parser);
 }
