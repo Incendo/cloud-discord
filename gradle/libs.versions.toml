@@ -24,6 +24,7 @@ jda5 = "5.0.0-beta.20"
 logback = "1.4.14"
 kord = "0.13.1"
 kotlinLogging = "6.0.3"
+discord4j = "3.2.6"
 
 # Test
 jupiterEngine = "5.10.1"
@@ -53,6 +54,7 @@ logback-core = { group = "ch.qos.logback", name = "logback-core", version.ref = 
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 kord = { group = "dev.kord", name = "kord-core", version.ref = "kord" }
 kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
+discord4j = { group = "com.discord4j", name = "discord4j-core", version.ref = "discord4j" }
 
 # Kotlin
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

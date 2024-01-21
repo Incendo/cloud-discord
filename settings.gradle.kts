@@ -31,11 +31,15 @@ dependencyResolutionManagement {
 rootProject.name = "cloud-discord"
 
 include(":cloud-discord-common")
+
+include(":cloud-discord4j")
 include(":cloud-javacord")
 include(":cloud-jda")
 include(":cloud-jda5")
 include(":cloud-kord")
 
+include("examples/example-discord4j")
+findProject(":examples/example-discord4j")?.name = "example-discord4j"
 include("examples/example-jda5")
 findProject(":examples/example-jda5")?.name = "example-jda5"
 include("examples/example-kord")
