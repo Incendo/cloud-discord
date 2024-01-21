@@ -73,7 +73,7 @@ public final class JDARoleRepository implements DiscordRepository<Guild, Role> {
     }
 
     @Override
-    public @NonNull Collection<? extends @NonNull Role> getByName(@NonNull final String name) {
+    public @NonNull Collection<? extends @NonNull Role> getByName(final @NonNull String name) {
         return this.guild.getRolesByName(name, true);
     }
 }

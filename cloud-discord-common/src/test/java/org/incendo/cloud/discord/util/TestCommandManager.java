@@ -35,7 +35,7 @@ public final class TestCommandManager extends CommandManager<TestCommandSender> 
     }
 
     @Override
-    public boolean hasPermission(@NonNull final TestCommandSender sender, @NonNull final String permission) {
+    public boolean hasPermission(final @NonNull TestCommandSender sender, final @NonNull String permission) {
         return true;
     }
 }

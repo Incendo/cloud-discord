@@ -78,7 +78,7 @@ public final class JDAMemberRepository implements DiscordRepository<Guild, Membe
     }
 
     @Override
-    public @NonNull Collection<? extends @NonNull Member> getByName(@NonNull final String name) {
+    public @NonNull Collection<? extends @NonNull Member> getByName(final @NonNull String name) {
         return this.guild.getMembers()
                 .stream()
                 .filter(member -> member.getEffectiveName().toLowerCase().startsWith(name))

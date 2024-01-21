@@ -98,7 +98,7 @@ public final class JDAUserRepository implements DiscordRepository<Guild, User> {
     }
 
     @Override
-    public @NonNull Collection<? extends @NonNull User> getByName(@NonNull final String name) {
+    public @NonNull Collection<? extends @NonNull User> getByName(final @NonNull String name) {
         if (this.isolation == DiscordUserParser.Isolation.GLOBAL) {
             return this.guild.getJDA().getUsersByName(name, true);
         }

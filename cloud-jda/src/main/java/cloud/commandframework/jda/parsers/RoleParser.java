@@ -84,7 +84,7 @@ public final class RoleParser<C> extends DiscordRoleParser<C, Guild, Role> {
     }
 
     @Override
-    protected @Nullable ArgumentParseResult<Role> preProcess(@NonNull final CommandContext<C> context) {
+    protected @Nullable ArgumentParseResult<Role> preProcess(final @NonNull CommandContext<C> context) {
         if (!context.contains("MessageReceivedEvent")) {
             return ArgumentParseResult.failure(new IllegalStateException(
                     "MessageReceivedEvent was not in the command context."
@@ -98,7 +98,7 @@ public final class RoleParser<C> extends DiscordRoleParser<C, Guild, Role> {
     }
 
     @Override
-    protected @NonNull DiscordRepository<Guild, Role> repository(@NonNull final CommandContext<C> context) {
+    protected @NonNull DiscordRepository<Guild, Role> repository(final @NonNull CommandContext<C> context) {
         final MessageReceivedEvent event = context.get("MessageReceivedEvent");
         return new JDARoleRepository(event.getGuild());
     }

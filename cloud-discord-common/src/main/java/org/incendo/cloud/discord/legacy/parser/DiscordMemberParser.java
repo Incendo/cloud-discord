@@ -50,8 +50,8 @@ public abstract class DiscordMemberParser<C, G, T> extends MentionableDiscordPar
 
     @Override
     public final @NonNull ArgumentParseResult<@NonNull T> parse(
-            @NonNull final CommandContext<@NonNull C> commandContext,
-            @NonNull final CommandInput commandInput
+            final @NonNull CommandContext<@NonNull C> commandContext,
+            final @NonNull CommandInput commandInput
     ) {
         final ArgumentParseResult<T> preProcessed = this.preProcess(commandContext);
         if (preProcessed != null) {

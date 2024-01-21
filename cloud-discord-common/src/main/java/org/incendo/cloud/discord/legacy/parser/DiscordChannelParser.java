@@ -50,8 +50,8 @@ public abstract class DiscordChannelParser<C, G, T> extends MentionableDiscordPa
 
     @Override
     public final @NonNull ArgumentParseResult<T> parse(
-            @NonNull final CommandContext<@NonNull C> commandContext,
-            @NonNull final CommandInput commandInput
+            final @NonNull CommandContext<@NonNull C> commandContext,
+            final @NonNull CommandInput commandInput
     ) {
         final ArgumentParseResult<T> preProcessed = this.preProcess(commandContext);
         if (preProcessed != null) {

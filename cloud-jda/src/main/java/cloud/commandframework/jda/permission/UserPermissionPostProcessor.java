@@ -40,7 +40,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class UserPermissionPostProcessor<T> implements CommandPostprocessor<T> {
 
     @Override
-    public void accept(@NonNull final CommandPostprocessingContext<T> postprocessingContext) {
+    public void accept(final @NonNull CommandPostprocessingContext<T> postprocessingContext) {
         final CommandContext<T> context = postprocessingContext.commandContext();
         final CommandMeta meta = postprocessingContext.command().commandMeta();
         final MessageReceivedEvent event = context.get("MessageReceivedEvent");

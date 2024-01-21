@@ -103,7 +103,7 @@ public final class UserParser<C> extends DiscordUserParser<C, Guild, User> {
     }
 
     @Override
-    protected @Nullable ArgumentParseResult<User> preProcess(@NonNull final CommandContext<C> context) {
+    protected @Nullable ArgumentParseResult<User> preProcess(final @NonNull CommandContext<C> context) {
         if (!context.contains("MessageReceivedEvent")) {
             return ArgumentParseResult.failure(new IllegalStateException(
                     "MessageReceivedEvent was not in the command context."
