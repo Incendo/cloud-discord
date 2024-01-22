@@ -25,7 +25,7 @@ package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.types.range.Range;
 import java.util.Objects;
@@ -152,7 +152,7 @@ class StandardDiscordCommandFactoryTest {
     @Test
     void testAggregateParser() {
         // Arrange
-        final AggregateCommandParser<TestCommandSender, TestAggregateObject> parser = AggregateCommandParser
+        final AggregateParser<TestCommandSender, TestAggregateObject> parser = AggregateParser
                 .<TestCommandSender>builder()
                 .withComponent("integer", integerParser())
                 .withComponent("string", stringParser())

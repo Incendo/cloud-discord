@@ -24,7 +24,7 @@
 package org.incendo.cloud.discord.jda5.example.commands;
 
 import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import net.dv8tion.jda.api.entities.User;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -44,7 +44,7 @@ public final class AggregateCommand implements Example {
 
     @Override
     public void register(final @NonNull JDA5CommandManager<JDAInteraction> commandManager) {
-        final AggregateCommandParser<JDAInteraction, Hug> hugParser = AggregateCommandParser.<JDAInteraction>builder()
+        final AggregateParser<JDAInteraction, Hug> hugParser = AggregateParser.<JDAInteraction>builder()
                 .withComponent("recipient", JDAParser.userParser())
                 .withComponent("number", integerParser(1, 100))
                 .withDirectMapper(Hug.class, (cmdCtx, ctx) -> ArgumentParseResult.success(

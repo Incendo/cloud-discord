@@ -24,7 +24,7 @@
 package org.incendo.cloud.discord.kord.example.commands
 
 import cloud.commandframework.Description
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser
+import cloud.commandframework.arguments.aggregate.AggregateParser
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.standard.IntegerParser.integerParser
 import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
@@ -48,7 +48,7 @@ import org.incendo.cloud.discord.slash.DiscordChoices
 public class AggregateCommand : Example {
 
     override fun register(commandManager: KordCommandManager<KordInteraction>) {
-        val hugParser = AggregateCommandParser.builder<KordInteraction>()
+        val hugParser = AggregateParser.builder<KordInteraction>()
             .withComponent {
                 parser = userParser()
                 name = "recipient"

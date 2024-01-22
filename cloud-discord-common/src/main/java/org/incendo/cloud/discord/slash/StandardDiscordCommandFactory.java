@@ -24,7 +24,7 @@
 package org.incendo.cloud.discord.slash;
 
 import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.standard.ByteParser;
 import cloud.commandframework.arguments.standard.DoubleParser;
@@ -190,9 +190,9 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
         }
 
         final List<CommandComponent<C>> components;
-        if (component.parser() instanceof AggregateCommandParser) {
-            final AggregateCommandParser<C, ?> aggregateCommandParser = (AggregateCommandParser<C, ?>) component.parser();
-            components = aggregateCommandParser.components();
+        if (component.parser() instanceof AggregateParser) {
+            final AggregateParser<C, ?> aggregateParser = (AggregateParser<C, ?>) component.parser();
+            components = aggregateParser.components();
         } else {
             components = Collections.singletonList(component);
         }

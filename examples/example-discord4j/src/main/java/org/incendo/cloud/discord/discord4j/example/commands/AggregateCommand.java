@@ -25,7 +25,7 @@ package org.incendo.cloud.discord.discord4j.example.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import discord4j.core.object.entity.User;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -46,7 +46,7 @@ public final class AggregateCommand implements Example {
 
     @Override
     public void register(final @NonNull Discord4JCommandManager<Discord4JInteraction> commandManager) {
-        final AggregateCommandParser<Discord4JInteraction, Hug> hugParser = AggregateCommandParser.<Discord4JInteraction>builder()
+        final AggregateParser<Discord4JInteraction, Hug> hugParser = AggregateParser.<Discord4JInteraction>builder()
                 .withComponent("recipient", Discord4JParser.userParser())
                 .withComponent("number", integerParser(1, 100))
                 .withDirectMapper(Hug.class, (cmdCtx, ctx) -> ArgumentParseResult.success(
