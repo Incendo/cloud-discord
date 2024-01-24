@@ -23,16 +23,16 @@
 //
 package org.incendo.cloud.discord.jda5.example.commands;
 
-import cloud.commandframework.Description;
-import cloud.commandframework.keys.CloudKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.jda5.ReplySetting;
 import org.incendo.cloud.discord.jda5.example.Example;
 import org.incendo.cloud.discord.slash.CommandScope;
+import org.incendo.cloud.key.CloudKey;
 
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
 /**
  * Example of a command that responds with the original input.

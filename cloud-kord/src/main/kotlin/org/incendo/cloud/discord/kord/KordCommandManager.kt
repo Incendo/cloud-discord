@@ -23,24 +23,24 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.CommandManager
-import cloud.commandframework.exceptions.CommandExecutionException
-import cloud.commandframework.exceptions.InvalidCommandSenderException
-import cloud.commandframework.exceptions.InvalidSyntaxException
-import cloud.commandframework.exceptions.NoPermissionException
-import cloud.commandframework.exceptions.NoSuchCommandException
-import cloud.commandframework.exceptions.handling.ExceptionContext
-import cloud.commandframework.exceptions.handling.ExceptionController
-import cloud.commandframework.execution.ExecutionCoordinator
-import cloud.commandframework.internal.CommandRegistrationHandler
-import cloud.commandframework.keys.CloudKey
-import cloud.commandframework.setting.Configurable
 import dev.kord.core.Kord
 import dev.kord.core.entity.Member
 import dev.kord.core.entity.User
 import dev.kord.core.entity.interaction.GuildInteraction
 import kotlinx.coroutines.runBlocking
 import org.apiguardian.api.API
+import org.incendo.cloud.CommandManager
+import org.incendo.cloud.exception.CommandExecutionException
+import org.incendo.cloud.exception.InvalidCommandSenderException
+import org.incendo.cloud.exception.InvalidSyntaxException
+import org.incendo.cloud.exception.NoPermissionException
+import org.incendo.cloud.exception.NoSuchCommandException
+import org.incendo.cloud.exception.handling.ExceptionContext
+import org.incendo.cloud.exception.handling.ExceptionController
+import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.internal.CommandRegistrationHandler
+import org.incendo.cloud.key.CloudKey
+import org.incendo.cloud.setting.Configurable
 
 /**
  * Command manager for Kord.

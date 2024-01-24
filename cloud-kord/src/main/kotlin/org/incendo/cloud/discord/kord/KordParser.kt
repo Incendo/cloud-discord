@@ -23,10 +23,6 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult
-import cloud.commandframework.arguments.parser.ParserDescriptor
-import cloud.commandframework.context.CommandContext
-import cloud.commandframework.context.CommandInput
 import dev.kord.core.entity.Attachment
 import dev.kord.core.entity.Entity
 import dev.kord.core.entity.Role
@@ -36,7 +32,11 @@ import dev.kord.core.entity.interaction.InteractionCommand
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import org.apiguardian.api.API
+import org.incendo.cloud.context.CommandContext
+import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.discord.slash.NullableParser
+import org.incendo.cloud.parser.ArgumentParseResult
+import org.incendo.cloud.parser.ParserDescriptor
 import java.util.concurrent.CompletableFuture
 
 /**

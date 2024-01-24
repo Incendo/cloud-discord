@@ -23,11 +23,11 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.types.range.Range;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.type.range.Range;
 
 /**
  * Maps min-max values to a {@link Range}.

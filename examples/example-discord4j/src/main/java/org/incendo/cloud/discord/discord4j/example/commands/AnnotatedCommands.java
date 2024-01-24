@@ -23,13 +23,6 @@
 //
 package org.incendo.cloud.discord.discord4j.example.commands;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.Command;
-import cloud.commandframework.annotations.specifier.Completions;
-import cloud.commandframework.annotations.specifier.Range;
-import cloud.commandframework.annotations.suggestions.Suggestions;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import discord4j.common.util.Snowflake;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,11 +33,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.annotation.specifier.Completions;
+import org.incendo.cloud.annotation.specifier.Range;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.discord.discord4j.Discord4JCommandManager;
 import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
 import org.incendo.cloud.discord.discord4j.example.Example;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier;
+import org.incendo.cloud.suggestion.Suggestion;
 
 /**
  * Example showcasing how to use cloud-annotations with cloud-Discord4J.

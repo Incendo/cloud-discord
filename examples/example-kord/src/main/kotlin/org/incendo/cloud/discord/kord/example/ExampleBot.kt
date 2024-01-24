@@ -23,10 +23,10 @@
 //
 package org.incendo.cloud.discord.kord.example
 
-import cloud.commandframework.execution.ExecutionCoordinator
 import dev.kord.core.Kord
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.incendo.cloud.discord.kord.KordCommandManager
+import org.incendo.cloud.execution.ExecutionCoordinator
 import java.io.File
 
 private val logger = KotlinLogging.logger {}

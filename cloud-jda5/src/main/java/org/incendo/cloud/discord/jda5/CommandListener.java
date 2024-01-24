@@ -23,12 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.Suggestions;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandContextFactory;
-import cloud.commandframework.context.StandardCommandContextFactory;
-import cloud.commandframework.util.StringUtils;
 import java.util.Objects;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
@@ -41,7 +35,13 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandContextFactory;
+import org.incendo.cloud.context.StandardCommandContextFactory;
 import org.incendo.cloud.discord.slash.DiscordSetting;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

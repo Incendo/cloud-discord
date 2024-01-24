@@ -23,12 +23,12 @@
 //
 package org.incendo.cloud.discord.discord4j.example;
 
-import cloud.commandframework.execution.ExecutionCoordinator;
 import discord4j.core.DiscordClient;
 import java.io.File;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.discord4j.Discord4JCommandManager;
 import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

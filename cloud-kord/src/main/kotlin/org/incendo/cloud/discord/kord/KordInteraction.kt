@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.context.CommandContext
 import dev.kord.core.behavior.interaction.respondEphemeral
 import dev.kord.core.behavior.interaction.respondPublic
 import dev.kord.core.behavior.interaction.response.DeferredEphemeralMessageInteractionResponseBehavior
@@ -34,6 +33,7 @@ import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.interaction.InteractionCreateEvent
 import dev.kord.rest.builder.message.create.InteractionResponseCreateBuilder
 import org.apiguardian.api.API
+import org.incendo.cloud.context.CommandContext
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public data class KordInteraction(

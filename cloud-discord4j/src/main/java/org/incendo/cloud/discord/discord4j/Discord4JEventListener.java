@@ -23,10 +23,6 @@
 //
 package org.incendo.cloud.discord.discord4j;
 
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandContextFactory;
-import cloud.commandframework.context.StandardCommandContextFactory;
-import cloud.commandframework.util.StringUtils;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.interaction.ChatInputAutoCompleteEvent;
@@ -46,7 +42,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandContextFactory;
+import org.incendo.cloud.context.StandardCommandContextFactory;
 import org.incendo.cloud.discord.slash.CommandScope;
+import org.incendo.cloud.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 @API(status = API.Status.INTERNAL, since = "1.0.0")

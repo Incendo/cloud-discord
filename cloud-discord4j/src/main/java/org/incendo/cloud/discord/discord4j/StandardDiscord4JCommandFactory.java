@@ -23,8 +23,6 @@
 //
 package org.incendo.cloud.discord.discord4j;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.internal.CommandNode;
 import discord4j.discordjson.json.ApplicationCommandOptionChoiceData;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
@@ -35,6 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandTree;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.CommandScopePredicate;
 import org.incendo.cloud.discord.slash.DiscordCommand;
@@ -45,6 +44,7 @@ import org.incendo.cloud.discord.slash.NodeProcessor;
 import org.incendo.cloud.discord.slash.OptionRegistry;
 import org.incendo.cloud.discord.slash.StandardDiscordCommandFactory;
 import org.incendo.cloud.discord.slash.StandardOptionRegistry;
+import org.incendo.cloud.internal.CommandNode;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 final class StandardDiscord4JCommandFactory<C> implements Discord4JCommandFactory<C> {

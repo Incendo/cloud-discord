@@ -23,13 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5.example.commands;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.Command;
-import cloud.commandframework.annotations.specifier.Completions;
-import cloud.commandframework.annotations.specifier.Range;
-import cloud.commandframework.annotations.suggestions.Suggestions;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,13 +32,20 @@ import java.util.stream.Stream;
 import net.dv8tion.jda.api.entities.IMentionable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.annotation.specifier.Completions;
+import org.incendo.cloud.annotation.specifier.Range;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
-import org.incendo.cloud.discord.jda5.annotations.ReplySetting;
-import org.incendo.cloud.discord.jda5.annotations.ReplySettingBuilderModifier;
+import org.incendo.cloud.discord.jda5.annotation.ReplySetting;
+import org.incendo.cloud.discord.jda5.annotation.ReplySettingBuilderModifier;
 import org.incendo.cloud.discord.jda5.example.Example;
 import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier;
+import org.incendo.cloud.suggestion.Suggestion;
 
 /**
  * Example showcasing how to use cloud-annotations with cloud-jda5.

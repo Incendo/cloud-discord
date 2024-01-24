@@ -23,19 +23,6 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.standard.ByteParser;
-import cloud.commandframework.arguments.standard.DoubleParser;
-import cloud.commandframework.arguments.standard.FloatParser;
-import cloud.commandframework.arguments.standard.IntegerParser;
-import cloud.commandframework.arguments.standard.LongParser;
-import cloud.commandframework.arguments.standard.NumberParser;
-import cloud.commandframework.arguments.standard.ShortParser;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.types.range.Range;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.ArrayList;
@@ -49,6 +36,19 @@ import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.parser.standard.ByteParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.FloatParser;
+import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.parser.standard.LongParser;
+import org.incendo.cloud.parser.standard.NumberParser;
+import org.incendo.cloud.parser.standard.ShortParser;
+import org.incendo.cloud.suggestion.SuggestionProvider;
+import org.incendo.cloud.type.range.Range;
 
 @API(status = API.Status.INTERNAL, since = "1.0.0")
 public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C> {

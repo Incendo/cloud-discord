@@ -23,24 +23,24 @@
 //
 package org.incendo.cloud.discord.kord.example.commands
 
-import cloud.commandframework.Description
-import cloud.commandframework.arguments.aggregate.AggregateParser
-import cloud.commandframework.arguments.parser.ArgumentParseResult
-import cloud.commandframework.arguments.standard.IntegerParser.integerParser
-import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
-import cloud.commandframework.kotlin.extension.buildAndRegister
-import cloud.commandframework.kotlin.extension.name
-import cloud.commandframework.kotlin.extension.parser
-import cloud.commandframework.kotlin.extension.suggestionProvider
-import cloud.commandframework.kotlin.extension.textDescription
-import cloud.commandframework.kotlin.extension.withComponent
 import dev.kord.core.entity.User
+import org.incendo.cloud.description.Description
 import org.incendo.cloud.discord.kord.KordCommandManager
 import org.incendo.cloud.discord.kord.KordInteraction
 import org.incendo.cloud.discord.kord.KordParser.Companion.userParser
 import org.incendo.cloud.discord.kord.example.Example
 import org.incendo.cloud.discord.kord.interaction
 import org.incendo.cloud.discord.slash.DiscordChoices
+import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.kotlin.extension.buildAndRegister
+import org.incendo.cloud.kotlin.extension.name
+import org.incendo.cloud.kotlin.extension.parser
+import org.incendo.cloud.kotlin.extension.suggestionProvider
+import org.incendo.cloud.kotlin.extension.textDescription
+import org.incendo.cloud.kotlin.extension.withComponent
+import org.incendo.cloud.parser.ArgumentParseResult
+import org.incendo.cloud.parser.aggregate.AggregateParser
+import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 
 /**
  * Example showcasing aggregate parsers.

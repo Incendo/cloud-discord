@@ -23,9 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.permission.Permission;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,6 +39,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandTree;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.CommandScopePredicate;
 import org.incendo.cloud.discord.slash.DiscordCommand;
@@ -54,6 +52,8 @@ import org.incendo.cloud.discord.slash.NodeProcessor;
 import org.incendo.cloud.discord.slash.OptionRegistry;
 import org.incendo.cloud.discord.slash.StandardDiscordCommandFactory;
 import org.incendo.cloud.discord.slash.StandardOptionRegistry;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.permission.Permission;
 
 /**
  * Standard implementation of {@link JDACommandFactory}.

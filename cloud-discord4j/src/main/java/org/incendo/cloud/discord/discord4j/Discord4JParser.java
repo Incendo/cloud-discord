@@ -23,10 +23,6 @@
 //
 package org.incendo.cloud.discord.discord4j;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
@@ -41,7 +37,11 @@ import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.discord.slash.NullableParser;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ParserDescriptor;
 import reactor.core.publisher.Mono;
 
 /**

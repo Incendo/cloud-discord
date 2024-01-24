@@ -23,13 +23,13 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext;
-import cloud.commandframework.execution.postprocessor.CommandPostprocessor;
 import java.util.Objects;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.slash.DiscordSetting;
+import org.incendo.cloud.execution.postprocessor.CommandPostprocessingContext;
+import org.incendo.cloud.execution.postprocessor.CommandPostprocessor;
 
 /**
  * Postprocessor that configures the interaction reply according to the command {@link ReplySetting}.

@@ -23,11 +23,11 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.Command
-import cloud.commandframework.kotlin.MutableCommandBuilder
-import cloud.commandframework.permission.Permission
 import dev.kord.common.entity.Permissions
+import org.incendo.cloud.Command
 import org.incendo.cloud.discord.slash.DiscordPermission
+import org.incendo.cloud.kotlin.MutableCommandBuilder
+import org.incendo.cloud.permission.Permission
 
 /**
  * Returns the Cloud equivalent of this instance.

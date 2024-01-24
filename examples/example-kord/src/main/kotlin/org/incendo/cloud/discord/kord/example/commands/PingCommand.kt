@@ -23,13 +23,8 @@
 //
 package org.incendo.cloud.discord.kord.example.commands
 
-import cloud.commandframework.Description
-import cloud.commandframework.arguments.standard.StringParser.greedyStringParser
-import cloud.commandframework.keys.CloudKey
-import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
-import cloud.commandframework.kotlin.extension.buildAndRegister
-import cloud.commandframework.kotlin.extension.textDescription
 import dev.kord.common.entity.Permission
+import org.incendo.cloud.description.Description
 import org.incendo.cloud.discord.kord.KordCommandManager
 import org.incendo.cloud.discord.kord.KordInteraction
 import org.incendo.cloud.discord.kord.commandScope
@@ -37,6 +32,11 @@ import org.incendo.cloud.discord.kord.example.Example
 import org.incendo.cloud.discord.kord.interaction
 import org.incendo.cloud.discord.kord.permissions
 import org.incendo.cloud.discord.slash.CommandScope
+import org.incendo.cloud.key.CloudKey
+import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.kotlin.extension.buildAndRegister
+import org.incendo.cloud.kotlin.extension.textDescription
+import org.incendo.cloud.parser.standard.StringParser.greedyStringParser
 
 /**
  * Example of a command that responds with the original input.

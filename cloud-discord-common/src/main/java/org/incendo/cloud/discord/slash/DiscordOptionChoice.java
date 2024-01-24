@@ -23,11 +23,11 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
+import org.incendo.cloud.suggestion.Suggestion;
 
 /**
  * Represents a Discord option choice.

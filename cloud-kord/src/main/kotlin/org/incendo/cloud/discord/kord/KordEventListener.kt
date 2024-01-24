@@ -23,9 +23,6 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.context.CommandContextFactory
-import cloud.commandframework.context.StandardCommandContextFactory
-import cloud.commandframework.util.StringUtils
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.suggestInteger
@@ -44,6 +41,9 @@ import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import kotlinx.coroutines.future.await
 import org.apiguardian.api.API
+import org.incendo.cloud.context.CommandContextFactory
+import org.incendo.cloud.context.StandardCommandContextFactory
+import org.incendo.cloud.util.StringUtils
 
 /**
  * Kord event listener which handles command registration, execution and autocompletion.

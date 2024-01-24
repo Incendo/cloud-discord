@@ -23,10 +23,10 @@
 //
 package org.incendo.cloud.discord.util;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 public final class TestCommandManager extends CommandManager<TestCommandSender> {
 

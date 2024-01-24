@@ -23,17 +23,17 @@
 //
 package org.incendo.cloud.discord.discord4j.example.commands;
 
-import cloud.commandframework.Description;
-import cloud.commandframework.keys.CloudKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.discord4j.Discord4JCommandManager;
 import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
 import org.incendo.cloud.discord.discord4j.example.Example;
 import org.incendo.cloud.discord.slash.CommandScope;
+import org.incendo.cloud.key.CloudKey;
 import reactor.core.publisher.Mono;
 
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 import static org.incendo.cloud.discord.discord4j.Discord4JCommandExecutionHandler.reactiveHandler;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
 /**
  * Example of a command that responds with the original input.

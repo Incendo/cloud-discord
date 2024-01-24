@@ -23,9 +23,6 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.CommandTree
-import cloud.commandframework.internal.CommandNode
-import cloud.commandframework.permission.Permission
 import dev.kord.common.DiscordBitSet
 import dev.kord.common.entity.Permissions.Builder
 import dev.kord.core.Kord
@@ -52,6 +49,7 @@ import dev.kord.rest.builder.interaction.subCommand
 import dev.kord.rest.builder.interaction.user
 import kotlinx.coroutines.flow.forEach
 import org.apiguardian.api.API
+import org.incendo.cloud.CommandTree
 import org.incendo.cloud.discord.slash.CommandScope
 import org.incendo.cloud.discord.slash.CommandScopePredicate
 import org.incendo.cloud.discord.slash.DiscordCommand
@@ -65,6 +63,8 @@ import org.incendo.cloud.discord.slash.NodeProcessor
 import org.incendo.cloud.discord.slash.OptionRegistry
 import org.incendo.cloud.discord.slash.StandardDiscordCommandFactory
 import org.incendo.cloud.discord.slash.StandardOptionRegistry
+import org.incendo.cloud.internal.CommandNode
+import org.incendo.cloud.permission.Permission
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 internal class StandardKordCommandFactory<C : Any>(
