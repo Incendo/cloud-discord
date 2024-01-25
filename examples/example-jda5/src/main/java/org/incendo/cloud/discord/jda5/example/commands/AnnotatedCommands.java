@@ -44,7 +44,7 @@ import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.jda5.annotation.ReplySetting;
 import org.incendo.cloud.discord.jda5.annotation.ReplySettingBuilderModifier;
 import org.incendo.cloud.discord.jda5.example.Example;
-import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier;
+import org.incendo.cloud.discord.slash.annotation.CommandScopeBuilderModifier;
 import org.incendo.cloud.suggestion.Suggestion;
 
 /**

@@ -43,7 +43,7 @@ import org.incendo.cloud.discord.discord4j.Discord4JCommandManager;
 import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
 import org.incendo.cloud.discord.discord4j.example.Example;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
-import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier;
+import org.incendo.cloud.discord.slash.annotation.CommandScopeBuilderModifier;
 import org.incendo.cloud.suggestion.Suggestion;
 
 /**

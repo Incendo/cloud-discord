@@ -34,7 +34,7 @@ import org.incendo.cloud.annotations.suggestion.Suggestions
 import org.incendo.cloud.discord.kord.KordCommandManager
 import org.incendo.cloud.discord.kord.KordInteraction
 import org.incendo.cloud.discord.kord.example.Example
-import org.incendo.cloud.discord.slash.annotations.CommandScopeBuilderModifier
+import org.incendo.cloud.discord.slash.annotation.CommandScopeBuilderModifier
 import org.incendo.cloud.kotlin.coroutines.annotations.installCoroutineSupport
 import org.incendo.cloud.suggestion.Suggestion
 
