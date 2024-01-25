@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5.example;
 
-import cloud.commandframework.execution.ExecutionCoordinator;
 import java.io.File;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -31,6 +30,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.slash.DiscordSetting;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,10 +23,10 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.internal.CommandNode;
 import java.util.function.BiPredicate;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.internal.CommandNode;
 
 /**
  * Predicate that determines whether a command scope should receive a certain command.

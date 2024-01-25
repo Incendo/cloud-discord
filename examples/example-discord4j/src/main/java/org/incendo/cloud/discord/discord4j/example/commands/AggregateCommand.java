@@ -23,21 +23,21 @@
 //
 package org.incendo.cloud.discord.discord4j.example.commands;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import discord4j.core.object.entity.User;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.discord4j.Discord4JCommandManager;
 import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
 import org.incendo.cloud.discord.discord4j.Discord4JParser;
 import org.incendo.cloud.discord.discord4j.example.Example;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
 
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.discord.discord4j.Discord4JCommandExecutionHandler.reactiveHandler;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 /**
  * Example showcasing aggregate parsers.

@@ -23,14 +23,14 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public interface DiscordChoiceProvider<C, T> extends BlockingSuggestionProvider<C> {

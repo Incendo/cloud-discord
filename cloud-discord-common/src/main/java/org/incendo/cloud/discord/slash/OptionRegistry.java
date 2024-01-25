@@ -23,13 +23,13 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.arguments.parser.ParserDescriptor;
 import io.leangen.geantyref.TypeToken;
 import java.util.Collection;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.returnsreceiver.qual.This;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Registry that stores {@link DiscordOptionType}-{@link ParserDescriptor} mappings.

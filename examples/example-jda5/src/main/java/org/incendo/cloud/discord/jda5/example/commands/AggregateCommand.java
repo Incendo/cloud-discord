@@ -23,19 +23,19 @@
 //
 package org.incendo.cloud.discord.jda5.example.commands;
 
-import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import net.dv8tion.jda.api.entities.User;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.jda5.JDAParser;
 import org.incendo.cloud.discord.jda5.example.Example;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
 
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 /**
  * Example showcasing aggregate parsers.

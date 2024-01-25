@@ -23,11 +23,6 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.standard.BooleanParser;
-import cloud.commandframework.arguments.standard.DoubleParser;
-import cloud.commandframework.arguments.standard.IntegerParser;
-import cloud.commandframework.arguments.standard.StringParser;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.Collection;
@@ -38,6 +33,11 @@ import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.common.returnsreceiver.qual.This;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.parser.standard.BooleanParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.parser.standard.StringParser;
 
 /**
  * Standard implementation of {@link OptionRegistry}.

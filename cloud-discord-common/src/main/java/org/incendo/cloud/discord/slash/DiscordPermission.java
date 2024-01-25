@@ -23,9 +23,9 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.permission.Permission;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.permission.Permission;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public final class DiscordPermission implements Permission {

@@ -23,8 +23,8 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.setting.Setting
 import org.apiguardian.api.API
+import org.incendo.cloud.setting.Setting
 
 /**
  * Kord-specific settings.

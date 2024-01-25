@@ -23,8 +23,6 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.internal.CommandNode;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +30,8 @@ import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CommandTree;
+import org.incendo.cloud.internal.CommandNode;
 
 /**
  * Processes {@link CommandNode nodes} and prepares them for mapping to Discord commands.

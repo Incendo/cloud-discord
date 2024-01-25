@@ -23,10 +23,10 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.Command;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.Command;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 
 /**

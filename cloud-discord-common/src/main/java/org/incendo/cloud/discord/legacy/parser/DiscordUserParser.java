@@ -23,15 +23,15 @@
 //
 package org.incendo.cloud.discord.legacy.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.discord.legacy.repository.DiscordRepository;
+import org.incendo.cloud.parser.ArgumentParseResult;
 
 /**
  * Parser for Discord users.

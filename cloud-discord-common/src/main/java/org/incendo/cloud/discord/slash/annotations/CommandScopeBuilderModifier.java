@@ -23,12 +23,12 @@
 //
 package org.incendo.cloud.discord.slash.annotations;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.BuilderModifier;
 import java.util.Objects;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.BuilderModifier;
 
 /**
  * Builder modifier that enables the use of {@link CommandScope}.

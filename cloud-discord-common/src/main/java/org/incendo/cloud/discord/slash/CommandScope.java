@@ -23,8 +23,6 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.keys.CloudKey;
 import io.leangen.geantyref.TypeToken;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +31,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.key.CloudKey;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public interface CommandScope<C> extends Command.Builder.Applicable<C> {

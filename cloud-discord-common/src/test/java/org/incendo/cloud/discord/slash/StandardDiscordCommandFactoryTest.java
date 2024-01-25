@@ -23,22 +23,22 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.Description;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.types.range.Range;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.util.TestCommandManager;
 import org.incendo.cloud.discord.util.TestCommandSender;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.type.range.Range;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static cloud.commandframework.arguments.standard.BooleanParser.booleanParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
 import static com.google.common.truth.Truth.assertThat;
+import static org.incendo.cloud.parser.standard.BooleanParser.booleanParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 class StandardDiscordCommandFactoryTest {
 

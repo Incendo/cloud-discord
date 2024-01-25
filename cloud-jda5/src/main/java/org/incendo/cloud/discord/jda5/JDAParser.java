@@ -23,10 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -38,7 +34,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.discord.slash.NullableParser;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * A parser which wraps a JDA {@link OptionMapping}.

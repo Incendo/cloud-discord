@@ -23,9 +23,9 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.internal.CommandNode;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.internal.CommandNode;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public interface DiscordCommandFactory<C> {

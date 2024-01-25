@@ -14,7 +14,7 @@ dokka = "1.9.10"
 coroutines = "1.7.3"
 
 # Cloud
-cloud = "2.0.0-SNAPSHOT"
+cloud = "2.0.0-beta.1"
 
 # External
 immutables = "2.10.0"
@@ -39,11 +39,11 @@ gradleKotlinJvm = { group = "org.jetbrains.kotlin.jvm", name = "org.jetbrains.ko
 gradleDokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
 
 # Cloud
-cloud-core = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
-cloud-annotations = { group = "cloud.commandframework", name = "cloud-annotations", version.ref = "cloud" }
-cloud-kotlin-coroutines = { group = "cloud.commandframework", name = "cloud-kotlin-coroutines", version.ref = "cloud" }
-cloud-kotlin-coroutines-annotations = { group = "cloud.commandframework", name = "cloud-kotlin-coroutines-annotations", version.ref = "cloud"}
-cloud-kotlin-extensions = { group = "cloud.commandframework", name = "cloud-kotlin-extensions", version.ref = "cloud" }
+cloud-core = { group = "org.incendo", name = "cloud-core", version.ref = "cloud" }
+cloud-annotations = { group = "org.incendo", name = "cloud-annotations", version.ref = "cloud" }
+cloud-kotlin-coroutines = { group = "org.incendo", name = "cloud-kotlin-coroutines", version.ref = "cloud" }
+cloud-kotlin-coroutines-annotations = { group = "org.incendo", name = "cloud-kotlin-coroutines-annotations", version.ref = "cloud"}
+cloud-kotlin-extensions = { group = "org.incendo", name = "cloud-kotlin-extensions", version.ref = "cloud" }
 
 # External
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }

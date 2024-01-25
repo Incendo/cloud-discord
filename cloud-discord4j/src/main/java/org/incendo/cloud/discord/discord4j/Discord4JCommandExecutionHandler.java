@@ -23,13 +23,13 @@
 //
 package org.incendo.cloud.discord.discord4j;
 
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.execution.CommandExecutionHandler;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.execution.CommandExecutionHandler;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 

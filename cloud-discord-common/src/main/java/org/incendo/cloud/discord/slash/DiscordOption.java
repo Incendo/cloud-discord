@@ -23,14 +23,14 @@
 //
 package org.incendo.cloud.discord.slash;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.types.range.Range;
 import java.util.List;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.immutables.value.Value;
+import org.incendo.cloud.Command;
 import org.incendo.cloud.discord.immutables.StagedImmutableBuilder;
+import org.incendo.cloud.type.range.Range;
 
 /**
  * Represents a Discord option.

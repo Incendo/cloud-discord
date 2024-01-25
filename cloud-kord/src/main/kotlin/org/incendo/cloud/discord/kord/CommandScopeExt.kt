@@ -23,8 +23,8 @@
 //
 package org.incendo.cloud.discord.kord
 
-import cloud.commandframework.kotlin.MutableCommandBuilder
 import org.incendo.cloud.discord.slash.CommandScope
+import org.incendo.cloud.kotlin.MutableCommandBuilder
 
 /**
  * Sets the command scope of the command builder.

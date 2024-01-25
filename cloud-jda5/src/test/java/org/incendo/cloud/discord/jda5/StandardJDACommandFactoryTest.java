@@ -23,8 +23,6 @@
 //
 package org.incendo.cloud.discord.jda5;
 
-import cloud.commandframework.Description;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import java.util.Collection;
 import java.util.List;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -33,15 +31,17 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.DiscordChoices;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static cloud.commandframework.arguments.standard.BooleanParser.booleanParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
 import static com.google.common.truth.Truth.assertThat;
+import static org.incendo.cloud.parser.standard.BooleanParser.booleanParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 class StandardJDACommandFactoryTest {
 
