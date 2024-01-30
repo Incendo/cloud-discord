@@ -32,15 +32,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.discord.slash.DiscordSetting;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.setting.Configurable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 /**
@@ -51,6 +48,8 @@ import reactor.core.publisher.Mono;
  */
 @API(status = API.Status.STABLE, since = "1.0.0")
 public class Discord4JCommandManager<C> extends CommandManager<C> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Discord4JCommandManager.class);
 
     public static final CloudKey<Discord4JInteraction> CONTEXT_DISCORD4J_INTERACTION = CloudKey.of(
             "cloud:discord4j_interaction",
@@ -168,24 +167,17 @@ public class Discord4JCommandManager<C> extends CommandManager<C> {
                     .subscribe());
         };
 
-        this.exceptionController().registerHandler(
-                Throwable.class,
-                ctx -> sendMessage.accept(ctx.context(), ctx.exception().getMessage())
-        ).registerHandler(
-                CommandExecutionException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Invalid Command Argument: " + ctx.exception().getCause().getMessage())
-        ).registerHandler(
-                NoSuchCommandException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Unknown command")
-        ).registerHandler(
-                NoPermissionException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Insufficient permissions")
-        ).registerHandler(
-                InvalidCommandSenderException.class,
-                ctx -> sendMessage.accept(ctx.context(), ctx.exception().getMessage())
-        ).registerHandler(
-                InvalidSyntaxException.class,
-                ctx -> sendMessage.accept(ctx.context(),
-                        "Invalid Command Syntax. Correct command syntax is: /" + ctx.exception().correctSyntax()));
+        this.registerDefaultExceptionHandlers(
+                triplet -> {
+                    final CommandContext<C> context = triplet.first();
+                    final String message = context.formatCaption(triplet.second(), triplet.third());
+
+                    final Discord4JInteraction interaction = context.get(CONTEXT_DISCORD4J_INTERACTION);
+                    interaction.commandEvent().ifPresent(event -> event.reply(message)
+                            .withEphemeral(this.discordSettings().get(DiscordSetting.EPHEMERAL_ERROR_MESSAGES))
+                            .subscribe());
+                },
+                pair -> LOGGER.error(pair.first(), pair.second())
+        );
     }
 }

@@ -40,15 +40,12 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.DiscordSetting;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.setting.Configurable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command manager for JDA5.
@@ -58,6 +55,8 @@ import org.incendo.cloud.setting.Configurable;
  */
 @API(status = API.Status.STABLE, since = "1.0.0")
 public class JDA5CommandManager<C> extends CommandManager<C> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDA5CommandManager.class);
 
     public static final CloudKey<JDAInteraction> CONTEXT_JDA_INTERACTION = CloudKey.of(
             "cloud:jda_interaction",
@@ -243,22 +242,24 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
             }
         };
 
-        this.exceptionController().registerHandler(
-                Throwable.class,
-                ctx -> sendMessage.accept(ctx.context(), ctx.exception().getMessage())
-        ).registerHandler(
-                CommandExecutionException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Invalid Command Argument: " + ctx.exception().getCause().getMessage())
-        ).registerHandler(
-                NoSuchCommandException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Unknown command")
-        ).registerHandler(
-                NoPermissionException.class,
-                ctx -> sendMessage.accept(ctx.context(), "Insufficient permissions")
-        ).registerHandler(InvalidCommandSenderException.class,
-                ctx -> sendMessage.accept(ctx.context(), ctx.exception().getMessage())
-        ).registerHandler(InvalidSyntaxException.class,
-                ctx -> sendMessage.accept(ctx.context(),
-                        "Invalid Command Syntax. Correct command syntax is: /" + ctx.exception().correctSyntax()));
+        this.registerDefaultExceptionHandlers(
+                triplet -> {
+                    final CommandContext<C> context = triplet.first();
+                    final JDAInteraction interaction = context.get(CONTEXT_JDA_INTERACTION);
+                    final ReplySetting<C> replySetting = (ReplySetting<C>) context
+                            .getOrDefault(META_REPLY_SETTING, null);
+
+                    final String message = context.formatCaption(triplet.second(), triplet.third());
+                    if (replySetting == null && this.discordSettings().get(DiscordSetting.EPHEMERAL_ERROR_MESSAGES)) {
+                        interaction.replyCallback().deferReply(true).queue();
+                        interaction.interactionEvent().getHook().sendMessage(message).queue();
+                    } else if (replySetting != null && replySetting.defer()) {
+                        interaction.interactionEvent().getHook().sendMessage(message).queue();
+                    } else {
+                        interaction.replyCallback().reply(message).queue();
+                    }
+                },
+                pair -> LOGGER.error(pair.first(), pair.second())
+        );
     }
 }

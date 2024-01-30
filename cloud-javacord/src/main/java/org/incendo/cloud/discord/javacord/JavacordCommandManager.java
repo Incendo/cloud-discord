@@ -26,19 +26,15 @@ package org.incendo.cloud.discord.javacord;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.discord.javacord.sender.JavacordCommandSender;
 import org.incendo.cloud.discord.javacord.sender.JavacordServerSender;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.handling.ExceptionContext;
-import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.key.CloudKey;
 import org.javacord.api.DiscordApi;
@@ -47,8 +43,7 @@ import org.javacord.api.entity.user.User;
 
 public class JavacordCommandManager<C> extends CommandManager<C> {
 
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS = "I'm sorry, but you do not have the permission to do this :/";
+    private static final Logger LOGGER = LogManager.getLogger(JavacordCommandManager.class);
 
     public static final CloudKey<JavacordCommandSender> JAVACORD_COMMAND_SENDER_KEY = CloudKey.of(
             "__internal_javacord_sender__",
@@ -146,47 +141,15 @@ public class JavacordCommandManager<C> extends CommandManager<C> {
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.registerHandler(Throwable.class, (commandSender, throwable) -> {
-            commandSender.sendErrorMessage(throwable.getMessage());
-            throwable.printStackTrace();
-        });
-        this.registerHandler(CommandExecutionException.class, (commandSender, throwable) -> {
-            commandSender.sendErrorMessage(MESSAGE_INTERNAL_ERROR);
-            throwable.getCause().printStackTrace();
-        });
-        this.registerHandler(ArgumentParseException.class, (commandSender, throwable) ->
-                commandSender.sendErrorMessage("Invalid Command Argument: `" + throwable.getCause().getMessage() + "`")
+        this.registerDefaultExceptionHandlers(
+                triplet -> {
+                    final CommandContext<C> context = triplet.first();
+                    final String message = context.formatCaption(triplet.second(), triplet.third());
+                    final JavacordCommandSender commandSender = context.get(JAVACORD_COMMAND_SENDER_KEY);
+
+                    commandSender.sendErrorMessage(message);
+                },
+                pair -> LOGGER.error(pair.first(), pair.second())
         );
-        this.registerHandler(NoPermissionException.class, (commandSender, throwable) ->
-                commandSender.sendErrorMessage(MESSAGE_NO_PERMS)
-        );
-        this.registerHandler(InvalidCommandSenderException.class, (commandSender, throwable) ->
-                commandSender.sendErrorMessage(throwable.getMessage())
-        );
-        this.registerHandler(InvalidSyntaxException.class, (commandSender, throwable) ->
-                commandSender.sendErrorMessage("Invalid Command Syntax. Correct command syntax is: `"
-                        + throwable.correctSyntax() + "`")
-        );
-    }
-
-    private <T extends Throwable> void registerHandler(
-            final @NonNull Class<T> exceptionClass,
-            final @NonNull JavacordExceptionHandler<C, T> handler
-    ) {
-        this.exceptionController().registerHandler(exceptionClass, handler);
-    }
-
-
-    @FunctionalInterface
-    @SuppressWarnings("FunctionalInterfaceMethodChanged")
-    private interface JavacordExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
-
-        @Override
-        default void handle(@NonNull ExceptionContext<C, T> context) throws Throwable {
-            final JavacordCommandSender commandSender = context.context().get(JAVACORD_COMMAND_SENDER_KEY);
-            this.handle(commandSender, context.exception());
-        }
-
-        void handle(@NonNull JavacordCommandSender commandSender, @NonNull T throwable) throws Throwable;
     }
 }

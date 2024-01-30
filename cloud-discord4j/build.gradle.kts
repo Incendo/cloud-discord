@@ -7,5 +7,6 @@ dependencies {
     api(projects.cloudDiscordCommon)
     implementation(libs.cloud.annotations)
 
+    api(libs.slf4j)
     implementation(libs.discord4j)
 }

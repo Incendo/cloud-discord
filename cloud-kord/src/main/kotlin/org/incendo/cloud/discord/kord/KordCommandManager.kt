@@ -30,17 +30,12 @@ import dev.kord.core.entity.interaction.GuildInteraction
 import kotlinx.coroutines.runBlocking
 import org.apiguardian.api.API
 import org.incendo.cloud.CommandManager
-import org.incendo.cloud.exception.CommandExecutionException
-import org.incendo.cloud.exception.InvalidCommandSenderException
-import org.incendo.cloud.exception.InvalidSyntaxException
-import org.incendo.cloud.exception.NoPermissionException
-import org.incendo.cloud.exception.NoSuchCommandException
-import org.incendo.cloud.exception.handling.ExceptionContext
-import org.incendo.cloud.exception.handling.ExceptionController
 import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.internal.CommandRegistrationHandler
 import org.incendo.cloud.key.CloudKey
 import org.incendo.cloud.setting.Configurable
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Command manager for Kord.
@@ -58,6 +53,8 @@ public class KordCommandManager<C : Any>(
 ) {
 
     public companion object {
+        private val LOGGER: Logger = LoggerFactory.getLogger(KordCommandManager::class.java)
+
         /**
          * Stores the interaction. This should be accessed using [cloud.commandframework.context.CommandContext.interaction].
          */
@@ -121,45 +118,17 @@ public class KordCommandManager<C : Any>(
     override fun hasPermission(sender: C, permission: String): Boolean = permissionPredicate(sender, permission)
 
     private fun registerDefaultExceptionHandlers() {
-        exceptionController().registerSuspending<Throwable> {
-            it.context().interaction.respondEphemeral {
-                content = it.exception().message
+        registerDefaultExceptionHandlers(
+            {
+                runBlocking {
+                    it.first().interaction.respondEphemeral {
+                        content = it.first().formatCaption(it.second(), it.third())
+                    }
+                }
+            },
+            {
+                LOGGER.error(it.first(), it.second())
             }
-        }
-        exceptionController().registerSuspending<CommandExecutionException> {
-            it.context().interaction.respondEphemeral {
-                content = "Invalid Command Argument: ${it.exception().cause?.message}"
-            }
-        }
-        exceptionController().registerSuspending<NoSuchCommandException> {
-            it.context().interaction.respondEphemeral {
-                content = "Unknown command"
-            }
-        }
-        exceptionController().registerSuspending<NoPermissionException> {
-            it.context().interaction.respondEphemeral {
-                content = "Insufficient permissions"
-            }
-        }
-        exceptionController().registerSuspending<InvalidCommandSenderException> {
-            it.context().interaction.respondEphemeral {
-                content = it.exception().message
-            }
-        }
-        exceptionController().registerSuspending<InvalidSyntaxException> {
-            it.context().interaction.respondEphemeral {
-                content = "Invalid Command Syntax. Correct command syntax is: /${it.exception().correctSyntax()}"
-            }
-        }
-    }
-
-    private inline fun <reified T : Throwable> ExceptionController<C>.registerSuspending(
-        crossinline handler: suspend (ExceptionContext<C, T>) -> Unit
-    ) {
-        exceptionController().registerHandler(T::class.java) { exceptionContext ->
-            runBlocking {
-                handler(exceptionContext)
-            }
-        }
+        )
     }
 }

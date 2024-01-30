@@ -25,6 +25,8 @@ logback = "1.4.14"
 kord = "0.13.1"
 kotlinLogging = "6.0.3"
 discord4j = "3.2.6"
+slf4j = "2.0.11"
+log4j = "2.22.1"
 
 # Test
 jupiterEngine = "5.10.1"
@@ -55,6 +57,8 @@ logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.
 kord = { group = "dev.kord", name = "kord-core", version.ref = "kord" }
 kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
 discord4j = { group = "com.discord4j", name = "discord4j-core", version.ref = "discord4j" }
+slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
 
 # Kotlin
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

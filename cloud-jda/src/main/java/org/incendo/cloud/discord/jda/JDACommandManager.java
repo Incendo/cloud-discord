@@ -42,25 +42,18 @@ import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.discord.jda.parser.ChannelParser;
 import org.incendo.cloud.discord.jda.parser.MemberParser;
 import org.incendo.cloud.discord.jda.parser.RoleParser;
 import org.incendo.cloud.discord.jda.parser.UserParser;
-import org.incendo.cloud.discord.jda.permission.BotJDAPermissionException;
 import org.incendo.cloud.discord.jda.permission.BotPermissionPostProcessor;
-import org.incendo.cloud.discord.jda.permission.UserJDAPermissionException;
 import org.incendo.cloud.discord.jda.permission.UserPermissionPostProcessor;
 import org.incendo.cloud.discord.legacy.parser.DiscordParserMode;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
-import org.incendo.cloud.exception.handling.ExceptionContext;
-import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command manager for use with JDA
@@ -71,11 +64,7 @@ import org.incendo.cloud.internal.CommandRegistrationHandler;
 @Deprecated
 public class JDACommandManager<C> extends CommandManager<C> implements SenderMapperHolder<MessageReceivedEvent, C> {
 
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_INVALID_SYNTAX = "Invalid Command Syntax. Correct command syntax is: ";
-    private static final String MESSAGE_NO_PERMS = "I'm sorry, but you do not have permission to perform this command. "
-            + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command";
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDACommandManager.class);
 
     private final JDA jda;
     private final long botId;
@@ -249,60 +238,19 @@ public class JDACommandManager<C> extends CommandManager<C> implements SenderMap
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.registerHandler(Throwable.class, (channel, throwable) -> channel.sendMessage(throwable.getMessage()).queue());
-        this.registerHandler(CommandExecutionException.class, (channel, throwable) -> {
-            channel.sendMessage(MESSAGE_INTERNAL_ERROR).queue();
-            throwable.getCause().printStackTrace();
-        });
-        this.registerHandler(ArgumentParseException.class, (channel, throwable) ->
-                channel.sendMessage("Invalid Command Argument: " + throwable.getCause().getMessage()).queue()
+        this.registerDefaultExceptionHandlers(
+                triplet -> {
+                    final CommandContext<C> context = triplet.first();
+                    final MessageChannel messageChannel = context.get("MessageChannel");
+                    final String message = context.formatCaption(triplet.second(), triplet.third());
+                    messageChannel.sendMessage(message).queue();
+                },
+                pair -> LOGGER.error(pair.first(), pair.second())
         );
-        this.registerHandler(NoSuchCommandException.class, (channel, throwable) ->
-                channel.sendMessage(MESSAGE_UNKNOWN_COMMAND).queue()
-        );
-        this.registerHandler(NoPermissionException.class, (channel, throwable) ->
-                channel.sendMessage(MESSAGE_NO_PERMS).queue()
-        );
-        this.registerHandler(InvalidCommandSenderException.class, (channel, throwable) ->
-                channel.sendMessage(throwable.getMessage()).queue()
-        );
-        this.exceptionController().registerHandler(InvalidSyntaxException.class, context -> {
-            final String prefix = this.getPrefixMapper().apply(context.context().sender());
-            context.context().<MessageChannel>get("MessageChannel").sendMessage(
-                    MESSAGE_INVALID_SYNTAX + prefix + context.exception().correctSyntax()
-            ).queue();
-        });
-       this.registerHandler(BotJDAPermissionException.class, (channel, throwable) ->
-               channel.sendMessage(throwable.getMessage()).queue()
-       );
-        this.registerHandler(UserJDAPermissionException.class, (channel, throwable) ->
-                channel.sendMessage(throwable.getMessage()).queue()
-        );
-    }
-
-    private <T extends Throwable> void registerHandler(
-            final @NonNull Class<T> exceptionClass,
-            final @NonNull JDAExceptionHandler<C, T> exceptionHandler
-    ) {
-        this.exceptionController().registerHandler(exceptionClass, exceptionHandler);
     }
 
     @Override
     public final @NonNull SenderMapper<MessageReceivedEvent, C> senderMapper() {
         return this.senderMapper;
-    }
-
-
-    @FunctionalInterface
-    @SuppressWarnings("FunctionalInterfaceMethodChanged")
-    private interface JDAExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
-
-        @Override
-        default void handle(@NonNull ExceptionContext<C, T> context) throws Throwable {
-            final MessageChannel messageChannel = context.context().get("MessageChannel");
-            this.handle(messageChannel, context.exception());
-        }
-
-        void handle(@NonNull MessageChannel channel, @NonNull T throwable) throws Throwable;
     }
 }
