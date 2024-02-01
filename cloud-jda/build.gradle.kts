@@ -7,5 +7,12 @@ dependencies {
     api(projects.cloudDiscordCommon)
 
     compileOnly(libs.cloud.annotations)
-    compileOnly(libs.jda)
+    implementation(libs.jda)
+    javadocLinks(libs.jda) {
+        isTransitive = false
+    }
+}
+
+configurations.javadocLinks {
+    exclude("net.dv8tion")
 }

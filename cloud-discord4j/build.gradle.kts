@@ -9,4 +9,7 @@ dependencies {
 
     api(libs.slf4j)
     implementation(libs.discord4j)
+    javadocLinks(libs.discord4j) {
+        isTransitive = false
+    }
 }
