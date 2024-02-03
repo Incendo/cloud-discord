@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
 import org.incendo.cloud.parser.standard.ByteParser;
 import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.parser.standard.FloatParser;
 import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.LongParser;
@@ -240,6 +242,15 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     private @NonNull Collection<? extends @NonNull DiscordOptionChoice<?>> extractChoices(
             final @NonNull SuggestionProvider<C> suggestionProvider
     ) {
+        // This means that the component is using the default enum suggestions.
+        // We'll map them to choices instead.
+        if (suggestionProvider instanceof EnumParser) {
+            return ((EnumParser<C, ?>) suggestionProvider).acceptedValues()
+                    .stream()
+                    .map(Enum::name)
+                    .map(value -> DiscordOptionChoice.of(value.toLowerCase(Locale.ENGLISH), value))
+                    .collect(Collectors.toList());
+        }
         if (!(suggestionProvider instanceof DiscordChoiceProvider)) {
             return Collections.emptyList();
         }

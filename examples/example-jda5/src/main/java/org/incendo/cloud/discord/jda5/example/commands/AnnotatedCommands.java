@@ -75,15 +75,17 @@ public final class AnnotatedCommands implements Example {
      * @param interaction command trigger
      * @param name        name of the cat to add
      * @param age         age of the cat
+     * @param breed       breed of the cat
      */
     @ReplySetting(defer = true, ephemeral = true)
-    @Command("cat add <name> <age>")
+    @Command("cat add <name> <age> <breed>")
     public void addCat(
             final @NonNull JDAInteraction interaction,
             @Completions("Cat,Benny,Meowy") final @NonNull String name,
-            @Range(min = "0", max = "20") final int age
+            @Range(min = "0", max = "20") final int age,
+            final @NonNull CatBreed breed
     ) {
-        this.catRepository.addCat(CatImpl.of(name, age));
+        this.catRepository.addCat(CatImpl.of(name, age, breed));
         // We need to reply through the hook because we used a deferred reply.
         interaction.interactionEvent()
                 .getHook()
@@ -177,6 +179,13 @@ public final class AnnotatedCommands implements Example {
          * @return cat age
          */
         int age();
+
+        /**
+         * Returns the cat breed.
+         *
+         * @return the breed
+         */
+        @NonNull CatBreed breed();
     }
 
 
@@ -222,5 +231,11 @@ public final class AnnotatedCommands implements Example {
         public @NonNull Collection<@NonNull Cat> cats() {
             return Collections.unmodifiableCollection(this.catMap.values());
         }
+    }
+
+    public enum CatBreed {
+        RAGDOLL,
+        SPYHNX,
+        BURMESE
     }
 }

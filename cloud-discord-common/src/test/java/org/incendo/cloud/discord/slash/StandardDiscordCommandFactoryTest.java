@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.incendo.cloud.parser.standard.BooleanParser.booleanParser;
+import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
@@ -179,6 +180,28 @@ class StandardDiscordCommandFactoryTest {
         assertThat(command.options().get(2).name()).isEqualTo("bool");
     }
 
+    @Test
+    void testEnumChoices() {
+        // Arrange
+        this.commandManager.command(
+                this.commandManager.commandBuilder("command").required("enum", enumParser(TestEnum.class))
+        );
+
+        // Act
+        final DiscordCommand<TestCommandSender> command =
+                this.commandFactory.create(this.commandManager.commandTree().getNamedNode("command"));
+
+        // Assert
+        assertThat(command.name()).isEqualTo("command");
+        assertThat(command.options()).hasSize(1);
+        final DiscordOption.Variable<?> option = (DiscordOption.Variable<?>) command.options().get(0);
+        assertThat(option.choices()).containsExactly(
+                DiscordOptionChoice.of("foo", "FOO"),
+                DiscordOptionChoice.of("bar", "BAR"),
+                DiscordOptionChoice.of("baz", "BAZ")
+        );
+    }
+
 
     private static final class TestAggregateObject {
 
@@ -208,5 +231,11 @@ class StandardDiscordCommandFactoryTest {
         public int hashCode() {
             return Objects.hash(this.integer, this.string, this.bool);
         }
+    }
+
+    private enum TestEnum {
+        FOO,
+        BAR,
+        BAZ
     }
 }
