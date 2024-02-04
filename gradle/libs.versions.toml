@@ -14,7 +14,7 @@ dokka = "1.9.10"
 coroutines = "1.7.3"
 
 # Cloud
-cloud = "2.0.0-SNAPSHOT"
+cloud = "2.0.0-beta.2"
 
 # External
 immutables = "2.10.0"
