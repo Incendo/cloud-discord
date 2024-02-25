@@ -151,12 +151,12 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     }
 
     @Override
-    public void setSuggestionRegistrationMapper(final Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
+    public void setSuggestionRegistrationMapper(final @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
         this.suggestionRegistrationMapper = Objects.requireNonNull(suggestionRegistrationMapper);
     }
 
     @Override
-    public Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper() {
+    public @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper() {
         return suggestionRegistrationMapper;
     }
 

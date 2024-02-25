@@ -47,12 +47,13 @@ public interface DiscordCommandFactory<C> {
      * @param suggestionRegistrationMapper The function to map suggestion providers to other suggestion provider during
      *                                     registration of the command to discord.
      */
-    void setSuggestionRegistrationMapper(Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper);
+    void setSuggestionRegistrationMapper(@NonNull Function<SuggestionProvider<C>,
+                                         SuggestionProvider<C>> suggestionRegistrationMapper);
 
     /**
      * A getter for the current set suggestion registration mapper.
      * @see DiscordCommandFactory#setSuggestionRegistrationMapper
      * @return The current set suggestion registration mapper.
      */
-    Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper();
+    @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper();
 }
