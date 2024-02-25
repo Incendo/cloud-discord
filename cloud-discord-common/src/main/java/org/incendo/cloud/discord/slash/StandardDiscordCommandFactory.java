@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -57,6 +58,8 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
     private final OptionRegistry<C> optionRegistry;
     private final Map<Class<?>, RangeMapper<C, ?, ?>> rangeMappers = new HashMap<>();
+
+    private Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper = provider -> provider;
 
     /**
      * Creates a new factory instance.
@@ -147,6 +150,16 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
                 .build();
     }
 
+    @Override
+    public void setSuggestionRegistrationMapper(final Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
+        this.suggestionRegistrationMapper = Objects.requireNonNull(suggestionRegistrationMapper);
+    }
+
+    @Override
+    public Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper() {
+        return suggestionRegistrationMapper;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private @NonNull List<DiscordOption<C>> createOptions(final @NonNull CommandNode<C> node) {
         final CommandComponent<C> component = node.component();
@@ -201,13 +214,14 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
         return components.stream()
                 .map(innerComponent -> {
+                    SuggestionProvider<C> suggestionProvider = suggestionRegistrationMapper.apply(innerComponent.suggestionProvider());
                     final DiscordOptionType optionType = this.optionRegistry.getOption(innerComponent.valueType());
-                    final Collection choices = this.extractChoices(innerComponent.suggestionProvider());
+                    final Collection choices = this.extractChoices(suggestionProvider);
                     final Range<?> range = this.extractRange(innerComponent.parser());
 
                     final boolean autoComplete;
                     if (choices.isEmpty()) {
-                        autoComplete = DiscordOptionType.AUTOCOMPLETE.contains(optionType);
+                        autoComplete = !(suggestionProvider.equals(SuggestionProvider.noSuggestions()));
                     } else {
                         autoComplete = false;
                     }
