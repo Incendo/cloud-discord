@@ -26,6 +26,8 @@ package org.incendo.cloud.discord.slash;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.suggestion.SuggestionProvider;
+import java.util.function.Function;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public interface DiscordCommandFactory<C> {
@@ -37,4 +39,20 @@ public interface DiscordCommandFactory<C> {
      * @return the option
      */
     @NonNull DiscordCommand<C> create(@NonNull CommandNode<C> node);
+
+    /**
+     * This allows you to change the way some {@link SuggestionProvider}s are handled during registration of the command. If
+     * you would like to use choices you can return {@link DiscordChoices}, or you could return
+     * {@link SuggestionProvider#noSuggestions()} to disable auto-complete for the argument (option).
+     * @param suggestionRegistrationMapper The function to map suggestion providers to other suggestion provider during
+     *                                     registration of the command to discord.
+     */
+    void setSuggestionRegistrationMapper(Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper);
+
+    /**
+     * A getter for the current set suggestion registration mapper.
+     * @see DiscordCommandFactory#setSuggestionRegistrationMapper
+     * @return The current set suggestion registration mapper.
+     */
+    Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper();
 }
