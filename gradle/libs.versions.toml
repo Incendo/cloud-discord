@@ -9,7 +9,7 @@ ktlint = "1.0.1"
 checkstyle = "10.12.5"
 
 # Kotlin
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 dokka = "1.9.10"
 coroutines = "1.7.3"
 
