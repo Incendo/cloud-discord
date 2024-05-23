@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.discord.slash;
 
+import io.leangen.geantyref.TypeToken;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CommandTree;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.key.CloudKey;
 
 /**
  * Processes {@link CommandNode nodes} and prepares them for mapping to Discord commands.
@@ -42,7 +44,7 @@ import org.incendo.cloud.internal.CommandNode;
 @API(status = API.Status.INTERNAL, since = "1.0.0")
 public final class NodeProcessor<C> {
 
-    public static final String NODE_META_SCOPE = "scope";
+    public static final CloudKey<CommandScope<?>> NODE_META_SCOPE = CloudKey.of("scope", new TypeToken<CommandScope<?>>() {});
 
     private final CommandTree<C> commandTree;
 
@@ -68,14 +70,14 @@ public final class NodeProcessor<C> {
                 CommandScope.META_COMMAND_SCOPE,
                 CommandScope.global()
         );
-        leafNode.nodeMeta().put(NODE_META_SCOPE, parentScope);
+        leafNode.nodeMeta().set(NODE_META_SCOPE, parentScope);
 
         List<CommandNode<C>> chain = this.getChain(leafNode);
         Collections.reverse(chain);
         chain = chain.subList(1, chain.size());
 
         for (final CommandNode<C> commandNode : chain) {
-            final CommandScope<C> existingScope = (CommandScope<C>) commandNode.nodeMeta().get(NODE_META_SCOPE);
+            final CommandScope<C> existingScope = (CommandScope<C>) commandNode.nodeMeta().getOrNull(NODE_META_SCOPE);
 
             CommandScope<C> scope;
             if (existingScope != null) {
@@ -96,7 +98,7 @@ public final class NodeProcessor<C> {
                 scope = parentScope;
             }
 
-            commandNode.nodeMeta().put(NODE_META_SCOPE, scope);
+            commandNode.nodeMeta().set(NODE_META_SCOPE, scope);
         }
     }
 

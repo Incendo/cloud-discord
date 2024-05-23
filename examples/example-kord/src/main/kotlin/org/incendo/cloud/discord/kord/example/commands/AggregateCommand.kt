@@ -38,7 +38,6 @@ import org.incendo.cloud.kotlin.extension.parser
 import org.incendo.cloud.kotlin.extension.suggestionProvider
 import org.incendo.cloud.kotlin.extension.textDescription
 import org.incendo.cloud.kotlin.extension.withComponent
-import org.incendo.cloud.parser.ArgumentParseResult
 import org.incendo.cloud.parser.aggregate.AggregateParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 
@@ -61,9 +60,7 @@ public class AggregateCommand : Example {
                 suggestionProvider = DiscordChoices.integers(1..20)
             }
             .withDirectMapper(Hug::class.java) { _, ctx ->
-                ArgumentParseResult.success(
-                    Hug(ctx.get("recipient"), ctx.get("number"))
-                )
+                Hug(ctx.get("recipient"), ctx.get("number"))
             }.build()
 
         commandManager.buildAndRegister("hug", Description.of("Hug someone")) {

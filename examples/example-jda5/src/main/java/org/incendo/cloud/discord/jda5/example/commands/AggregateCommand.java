@@ -32,7 +32,6 @@ import org.incendo.cloud.discord.jda5.JDA5CommandManager;
 import org.incendo.cloud.discord.jda5.JDAInteraction;
 import org.incendo.cloud.discord.jda5.JDAParser;
 import org.incendo.cloud.discord.jda5.example.Example;
-import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
 
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
@@ -47,9 +46,8 @@ public final class AggregateCommand implements Example {
         final AggregateParser<JDAInteraction, Hug> hugParser = AggregateParser.<JDAInteraction>builder()
                 .withComponent("recipient", JDAParser.userParser())
                 .withComponent("number", integerParser(1, 100))
-                .withDirectMapper(Hug.class, (cmdCtx, ctx) -> ArgumentParseResult.success(
-                        HugImpl.of(ctx.get("recipient"), ctx.get("number"))
-                )).build();
+                .withDirectMapper(Hug.class, (cmdCtx, ctx) -> HugImpl.of(ctx.get("recipient"), ctx.get("number")))
+                .build();
         commandManager.command(
                 commandManager.commandBuilder("hug", Description.of("Hug someone"))
                         .required("hug", hugParser)
@@ -73,7 +71,8 @@ public final class AggregateCommand implements Example {
          *
          * @return hug recipient
          */
-        @NonNull User recipient();
+        @NonNull
+        User recipient();
 
         /**
          * Returns the number of hugs.

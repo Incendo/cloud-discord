@@ -29,7 +29,6 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.discord.util.TestCommandManager;
 import org.incendo.cloud.discord.util.TestCommandSender;
-import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
 import org.incendo.cloud.type.range.Range;
 import org.junit.jupiter.api.BeforeEach;
@@ -158,11 +157,11 @@ class StandardDiscordCommandFactoryTest {
                 .withComponent("integer", integerParser())
                 .withComponent("string", stringParser())
                 .withComponent("bool", booleanParser())
-                .withDirectMapper(TestAggregateObject.class, (cmdCtx, ctx) -> ArgumentParseResult.success(new TestAggregateObject(
+                .withDirectMapper(TestAggregateObject.class, (cmdCtx, ctx) -> new TestAggregateObject(
                         ctx.get("integer"),
                         ctx.get("string"),
                         ctx.get("bool")
-                ))).build();
+                )).build();
         this.commandManager.command(this.commandManager.commandBuilder("command").required("aggregate", parser));
 
         // Act

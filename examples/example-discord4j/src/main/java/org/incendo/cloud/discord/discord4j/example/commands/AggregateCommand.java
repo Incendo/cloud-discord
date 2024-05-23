@@ -33,7 +33,6 @@ import org.incendo.cloud.discord.discord4j.Discord4JInteraction;
 import org.incendo.cloud.discord.discord4j.Discord4JParser;
 import org.incendo.cloud.discord.discord4j.example.Example;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
-import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
 
 import static org.incendo.cloud.discord.discord4j.Discord4JCommandExecutionHandler.reactiveHandler;
@@ -49,9 +48,8 @@ public final class AggregateCommand implements Example {
         final AggregateParser<Discord4JInteraction, Hug> hugParser = AggregateParser.<Discord4JInteraction>builder()
                 .withComponent("recipient", Discord4JParser.userParser())
                 .withComponent("number", integerParser(1, 100))
-                .withDirectMapper(Hug.class, (cmdCtx, ctx) -> ArgumentParseResult.success(
-                        HugImpl.of(ctx.get("recipient"), ctx.get("number"))
-                )).build();
+                .withDirectMapper(Hug.class, (cmdCtx, ctx) -> HugImpl.of(ctx.get("recipient"), ctx.get("number")))
+                .build();
         final CommandManager<Discord4JInteraction> command = commandManager.command(
                 commandManager.commandBuilder("hug", Description.of("Hug someone"))
                         .required("hug", hugParser)
