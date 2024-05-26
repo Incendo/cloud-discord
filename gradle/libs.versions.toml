@@ -11,7 +11,7 @@ checkstyle = "10.12.5"
 # Kotlin
 kotlin = "1.9.24"
 dokka = "1.9.20"
-coroutines = "1.7.3"
+coroutines = "1.8.1"
 
 # Cloud
 cloud = "2.0.0-rc.1"
