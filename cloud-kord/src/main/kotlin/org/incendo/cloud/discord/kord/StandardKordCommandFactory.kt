@@ -47,7 +47,6 @@ import dev.kord.rest.builder.interaction.role
 import dev.kord.rest.builder.interaction.string
 import dev.kord.rest.builder.interaction.subCommand
 import dev.kord.rest.builder.interaction.user
-import kotlinx.coroutines.flow.forEach
 import org.apiguardian.api.API
 import org.incendo.cloud.CommandTree
 import org.incendo.cloud.discord.slash.CommandScope
@@ -64,7 +63,6 @@ import org.incendo.cloud.discord.slash.OptionRegistry
 import org.incendo.cloud.discord.slash.StandardDiscordCommandFactory
 import org.incendo.cloud.discord.slash.StandardOptionRegistry
 import org.incendo.cloud.internal.CommandNode
-import org.incendo.cloud.permission.Permission
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 internal class StandardKordCommandFactory<C : Any>(
@@ -112,7 +110,7 @@ internal class StandardKordCommandFactory<C : Any>(
         nodeProcessor.prepareTree()
 
         commandTree.rootNodes().forEach { rootNode ->
-            val rootScope = rootNode.nodeMeta()[NodeProcessor.NODE_META_SCOPE] as CommandScope<C>
+            val rootScope = rootNode.nodeMeta().get(NodeProcessor.NODE_META_SCOPE) as CommandScope<C>
             if (!rootScope.overlaps(scope)) {
                 return@forEach
             }
@@ -125,7 +123,11 @@ internal class StandardKordCommandFactory<C : Any>(
             input(discordCommand.name(), discordCommand.description()) {
                 createCommand(discordCommand)
 
-                (rootNode.nodeMeta()[CommandNode.META_KEY_PERMISSION] as? Permission)
+                // It's the best we've got
+                val accessMap = rootNode.nodeMeta().getOrNull(CommandNode.META_KEY_ACCESS)
+                val senderType = rootNode.command().senderType().map { v -> v.type }.orElse(null)
+
+                accessMap?.get(senderType)
                     ?.let { it as? DiscordPermission }
                     ?.permissionString()
                     ?.let { DiscordBitSet(it) }
@@ -183,27 +185,35 @@ internal class StandardKordCommandFactory<C : Any>(
             DiscordOptionType.INTEGER -> integer(variable.name(), variable.description()) {
                 configureNumericVariable(variable)
             }
+
             DiscordOptionType.NUMBER -> number(variable.name(), variable.description()) {
                 configureNumericVariable(variable)
             }
+
             DiscordOptionType.STRING -> string(variable.name(), variable.description()) {
                 configureChoiceVariable(variable)
             }
+
             DiscordOptionType.BOOLEAN -> boolean(variable.name(), variable.description()) {
                 configureVariable(variable)
             }
+
             KordOptionType.ROLE -> role(variable.name(), variable.description()) {
                 configureVariable(variable)
             }
+
             KordOptionType.CHANNEL -> channel(variable.name(), variable.description()) {
                 configureVariable(variable)
             }
+
             KordOptionType.USER -> user(variable.name(), variable.description()) {
                 configureVariable(variable)
             }
+
             KordOptionType.MENTIONABLE -> mentionable(variable.name(), variable.description()) {
                 configureVariable(variable)
             }
+
             KordOptionType.ATTACHMENT -> attachment(variable.name(), variable.description()) {
                 configureVariable(variable)
             }

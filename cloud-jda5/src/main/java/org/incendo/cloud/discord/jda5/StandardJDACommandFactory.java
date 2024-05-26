@@ -23,9 +23,12 @@
 //
 package org.incendo.cloud.discord.jda5;
 
+import io.leangen.geantyref.TypeToken;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -126,9 +129,16 @@ final class StandardJDACommandFactory<C> implements JDACommandFactory<C> {
                 }
             }
 
-            final Permission permission = (Permission) rootNode.nodeMeta().get(CommandNode.META_KEY_PERMISSION);
-            if (permission instanceof DiscordPermission) {
-                data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(((DiscordPermission) permission).permission()));
+            // It's the best we've got
+            if (rootNode.command() != null) {
+                final Map<Type, Permission> accessMap = rootNode.nodeMeta().getOrNull(CommandNode.META_KEY_ACCESS);
+                final Type senderType = rootNode.command().senderType().map(TypeToken::getType).orElse(null);
+                if (accessMap != null && senderType != null) {
+                    final Permission permission = accessMap.get(senderType);
+                    if (permission instanceof DiscordPermission) {
+                        data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(((DiscordPermission) permission).permission()));
+                    }
+                }
             }
 
             data.setGuildOnly(rootScope instanceof CommandScope.Guilds);

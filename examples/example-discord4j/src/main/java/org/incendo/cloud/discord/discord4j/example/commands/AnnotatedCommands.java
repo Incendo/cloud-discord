@@ -158,7 +158,7 @@ public final class AnnotatedCommands implements Example {
         return this.catRepository.cats()
                 .stream()
                 .map(Cat::name)
-                .map(Suggestion::simple);
+                .map(Suggestion::suggestion);
     }
 
 

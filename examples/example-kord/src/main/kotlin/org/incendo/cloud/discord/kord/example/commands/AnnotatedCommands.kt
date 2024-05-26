@@ -94,7 +94,7 @@ public data class AnnotatedCommands(
     }
 
     @Suggestions("cats")
-    public fun catNames(): Sequence<Suggestion> = catRepository.cats.asSequence().map(Cat::name).map(Suggestion::simple)
+    public fun catNames(): Sequence<Suggestion> = catRepository.cats.asSequence().map(Cat::name).map(Suggestion::suggestion)
 
     public data class Cat(
         public val name: String,
