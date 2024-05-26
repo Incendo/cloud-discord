@@ -26,7 +26,7 @@ kord = "0.13.1"
 kotlinLogging = "6.0.9"
 discord4j = "3.2.6"
 slf4j = "2.0.12"
-log4j = "2.23.0"
+log4j = "2.23.1"
 
 # Test
 jupiterEngine = "5.10.2"
