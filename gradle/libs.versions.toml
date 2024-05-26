@@ -25,7 +25,7 @@ logback = "1.4.14"
 kord = "0.14.0"
 kotlinLogging = "6.0.9"
 discord4j = "3.2.6"
-slf4j = "2.0.12"
+slf4j = "2.0.13"
 log4j = "2.23.1"
 
 # Test
