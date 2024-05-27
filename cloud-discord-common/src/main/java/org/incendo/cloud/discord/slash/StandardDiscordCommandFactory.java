@@ -151,12 +151,12 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     }
 
     @Override
-    public void setSuggestionRegistrationMapper(final @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
+    public void suggestionRegistrationMapper(final @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
         this.suggestionRegistrationMapper = Objects.requireNonNull(suggestionRegistrationMapper);
     }
 
     @Override
-    public @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> getSuggestionRegistrationMapper() {
+    public @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper() {
         return suggestionRegistrationMapper;
     }
 
@@ -214,7 +214,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
         return components.stream()
                 .map(innerComponent -> {
-                    SuggestionProvider<C> suggestionProvider = suggestionRegistrationMapper.apply(innerComponent.suggestionProvider());
+                    SuggestionProvider<C> suggestionProvider = this.suggestionRegistrationMapper.apply(innerComponent.suggestionProvider());
                     final DiscordOptionType optionType = this.optionRegistry.getOption(innerComponent.valueType());
                     final Collection choices = this.extractChoices(suggestionProvider);
                     final Range<?> range = this.extractRange(innerComponent.parser());
