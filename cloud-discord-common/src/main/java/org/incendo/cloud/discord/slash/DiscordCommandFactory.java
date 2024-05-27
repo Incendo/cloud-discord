@@ -52,7 +52,7 @@ public interface DiscordCommandFactory<C> {
 
     /**
      * A getter for the current set suggestion registration mapper.
-     * @see DiscordCommandFactory#setSuggestionRegistrationMapper
+     * @see DiscordCommandFactory#suggestionRegistrationMapper(Function) 
      * @return The current set suggestion registration mapper.
      */
     @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper();
