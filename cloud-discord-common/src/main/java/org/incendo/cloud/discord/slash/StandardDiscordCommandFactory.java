@@ -151,13 +151,15 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
     }
 
     @Override
-    public void suggestionRegistrationMapper(final @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper) {
+    public void suggestionRegistrationMapper(
+            final @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper
+    ) {
         this.suggestionRegistrationMapper = Objects.requireNonNull(suggestionRegistrationMapper);
     }
 
     @Override
     public @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper() {
-        return suggestionRegistrationMapper;
+        return this.suggestionRegistrationMapper;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -214,14 +216,17 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
         return components.stream()
                 .map(innerComponent -> {
-                    SuggestionProvider<C> suggestionProvider = this.suggestionRegistrationMapper.apply(innerComponent.suggestionProvider());
+                    final SuggestionProvider<C> suggestionProvider = this.suggestionRegistrationMapper.apply(
+                            innerComponent.suggestionProvider()
+                    );
                     final DiscordOptionType optionType = this.optionRegistry.getOption(innerComponent.valueType());
                     final Collection choices = this.extractChoices(suggestionProvider);
                     final Range<?> range = this.extractRange(innerComponent.parser());
 
                     final boolean autoComplete;
                     if (choices.isEmpty()) {
-                        autoComplete = !(suggestionProvider.equals(SuggestionProvider.noSuggestions()));
+                        autoComplete = DiscordOptionType.AUTOCOMPLETE.contains(optionType)
+                                        && !suggestionProvider.equals(SuggestionProvider.noSuggestions());
                     } else {
                         autoComplete = false;
                     }
