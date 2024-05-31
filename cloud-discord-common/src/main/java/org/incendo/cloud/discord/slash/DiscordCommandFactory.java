@@ -23,9 +23,11 @@
 //
 package org.incendo.cloud.discord.slash;
 
+import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
 @API(status = API.Status.STABLE, since = "1.0.0")
 public interface DiscordCommandFactory<C> {
@@ -37,4 +39,25 @@ public interface DiscordCommandFactory<C> {
      * @return the option
      */
     @NonNull DiscordCommand<C> create(@NonNull CommandNode<C> node);
+
+    /**
+     * Sets the suggestion registration mapper.
+     *
+     * <p>The suggestion registration mapper determines how {@link SuggestionProvider}s are handled during registration of the
+     * command. {@link DiscordChoices} can be returned to use native Discord choices, or
+     * {@link SuggestionProvider#noSuggestions()} can be returned to disable auto-complete for the argument.</p>
+     *
+     * @param suggestionRegistrationMapper The function to map suggestion providers to other suggestion provider during
+     *                                     registration of the command to discord.
+     */
+    void suggestionRegistrationMapper(@NonNull Function<SuggestionProvider<C>,
+                                         SuggestionProvider<C>> suggestionRegistrationMapper);
+
+    /**
+     * Returns the current suggestion registration mapper.
+     *
+     * @see DiscordCommandFactory#suggestionRegistrationMapper(Function)
+     * @return The current set suggestion registration mapper.
+     */
+    @NonNull Function<SuggestionProvider<C>, SuggestionProvider<C>> suggestionRegistrationMapper();
 }
