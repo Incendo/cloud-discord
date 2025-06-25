@@ -138,7 +138,7 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
 
         final String description;
         if (component.description().isEmpty()) {
-            description = component.name();
+            description = getDescription(node);
         } else {
             description = component.description().textDescription();
         }
@@ -148,6 +148,22 @@ public class StandardDiscordCommandFactory<C> implements DiscordCommandFactory<C
                 .description(description)
                 .addAllOptions(options)
                 .build();
+    }
+
+    public String getDescription(final @NonNull CommandNode<C> node) {
+        Objects.requireNonNull(node, "node");
+        String description = null;
+        CommandNode<C> currentNode = node;
+
+        while (description == null) {
+            if (currentNode.children().isEmpty()) return description;
+            currentNode = currentNode.children().get(currentNode.children().size() - 1);
+            if (currentNode.command() != null && !currentNode.command().commandDescription().isEmpty()) {
+                description = currentNode.command().commandDescription().description().textDescription();
+            }
+        }
+
+        return description;
     }
 
     @Override
