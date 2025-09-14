@@ -40,15 +40,15 @@ import org.incendo.cloud.execution.postprocessor.CommandPostprocessor;
 @API(status = API.Status.INTERNAL, since = "1.0.0")
 final class ReplyCommandPostprocessor<C> implements CommandPostprocessor<C> {
 
-    private final JDA5CommandManager<C> commandManager;
+    private final JDA6CommandManager<C> commandManager;
 
-    ReplyCommandPostprocessor(final @NonNull JDA5CommandManager<C> commandManager) {
+    ReplyCommandPostprocessor(final @NonNull JDA6CommandManager<C> commandManager) {
         this.commandManager = Objects.requireNonNull(commandManager, "commandManager");
     }
 
     @Override
     public void accept(final @NonNull CommandPostprocessingContext<C> context) {
-        final JDAInteraction interaction = context.commandContext().get(JDA5CommandManager.CONTEXT_JDA_INTERACTION);
+        final JDAInteraction interaction = context.commandContext().get(JDA6CommandManager.CONTEXT_JDA_INTERACTION);
 
         final IReplyCallback callback = interaction.replyCallback();
         if (callback == null) {
@@ -65,13 +65,13 @@ final class ReplyCommandPostprocessor<C> implements CommandPostprocessor<C> {
         }
 
         final ReplySetting<?> replySetting = context.command().commandMeta().getOrDefault(
-                JDA5CommandManager.META_REPLY_SETTING,
+                JDA6CommandManager.META_REPLY_SETTING,
                 fallbackSetting
         );
         if (replySetting.defer()) {
             callback.deferReply(replySetting.ephemeral()).queue();
         }
         // This way we can keep track of whether we deferred or not.
-        context.commandContext().store(JDA5CommandManager.META_REPLY_SETTING, replySetting);
+        context.commandContext().store(JDA6CommandManager.META_REPLY_SETTING, replySetting);
     }
 }

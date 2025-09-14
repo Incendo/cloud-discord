@@ -48,15 +48,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Command manager for JDA5.
+ * Command manager for JDA6.
  *
  * @param <C> command sender type
  * @since 1.0.0
  */
 @API(status = API.Status.STABLE, since = "1.0.0")
-public class JDA5CommandManager<C> extends CommandManager<C> {
+public class JDA6CommandManager<C> extends CommandManager<C> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JDA5CommandManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDA6CommandManager.class);
 
     public static final CloudKey<JDAInteraction> CONTEXT_JDA_INTERACTION = CloudKey.of(
             "cloud:jda_interaction",
@@ -80,7 +80,7 @@ public class JDA5CommandManager<C> extends CommandManager<C> {
      * @param executionCoordinator execution coordinator instance
      * @param senderMapper         mapper from {@link JDAInteraction} to {@link C}
      */
-    public JDA5CommandManager(
+    public JDA6CommandManager(
             final @NonNull ExecutionCoordinator<C> executionCoordinator,
             final JDAInteraction.@NonNull InteractionMapper<C> senderMapper
     ) {

@@ -50,10 +50,10 @@ final class CommandListener<C> extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandListener.class);
 
-    private final JDA5CommandManager<C> commandManager;
+    private final JDA6CommandManager<C> commandManager;
     private final CommandContextFactory<C> contextFactory;
 
-    CommandListener(final @NonNull JDA5CommandManager<C> commandManager) {
+    CommandListener(final @NonNull JDA6CommandManager<C> commandManager) {
         this.commandManager = Objects.requireNonNull(commandManager, "commandManager");
         this.contextFactory = new StandardCommandContextFactory<>(commandManager);
     }
@@ -90,7 +90,7 @@ final class CommandListener<C> extends ListenerAdapter {
         this.commandManager.commandExecutor().executeCommand(
                 this.commandManager.senderMapper().map(interaction),
                 this.extractCommandName(event),
-                context -> context.store(JDA5CommandManager.CONTEXT_JDA_INTERACTION, interaction)
+                context -> context.store(JDA6CommandManager.CONTEXT_JDA_INTERACTION, interaction)
         );
     }
 
@@ -115,7 +115,7 @@ final class CommandListener<C> extends ListenerAdapter {
                 true,
                 this.commandManager.senderMapper().map(interaction)
         );
-        context.store(JDA5CommandManager.CONTEXT_JDA_INTERACTION, interaction);
+        context.store(JDA6CommandManager.CONTEXT_JDA_INTERACTION, interaction);
 
         try {
             final Suggestions<C, ? extends Suggestion> suggestions = this.commandManager.suggestionFactory()
