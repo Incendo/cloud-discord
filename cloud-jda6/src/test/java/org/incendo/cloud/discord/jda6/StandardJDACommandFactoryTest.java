@@ -32,9 +32,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.incendo.cloud.description.Description;
-import org.incendo.cloud.discord.jda6.JDA5CommandManager;
-import org.incendo.cloud.discord.jda6.JDACommandFactory;
-import org.incendo.cloud.discord.jda6.JDAInteraction;
 import org.incendo.cloud.discord.slash.CommandScope;
 import org.incendo.cloud.discord.slash.DiscordChoices;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -48,12 +45,12 @@ import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 class StandardJDACommandFactoryTest {
 
-    private JDA5CommandManager<JDAInteraction> commandManager;
+    private JDA6CommandManager<JDAInteraction> commandManager;
     private JDACommandFactory<JDAInteraction> commandFactory;
 
     @BeforeEach
     void setup() {
-        this.commandManager = new JDA5CommandManager<>(
+        this.commandManager = new JDA6CommandManager<>(
                 ExecutionCoordinator.simpleCoordinator(),
                 JDAInteraction.InteractionMapper.identity()
         );

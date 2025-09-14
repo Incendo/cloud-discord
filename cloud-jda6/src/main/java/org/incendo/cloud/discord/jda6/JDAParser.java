@@ -118,7 +118,7 @@ public final class JDAParser<C, T> extends NullableParser<C, T> {
             final @NonNull CommandContext<@NonNull C> commandContext,
             final @NonNull CommandInput commandInput
     ) {
-        final JDAInteraction interaction = commandContext.get(JDA5CommandManager.CONTEXT_JDA_INTERACTION);
+        final JDAInteraction interaction = commandContext.get(JDA6CommandManager.CONTEXT_JDA_INTERACTION);
         return interaction.getOptionMapping(commandInput.readString())
                 .map(mapping -> {
                     try {

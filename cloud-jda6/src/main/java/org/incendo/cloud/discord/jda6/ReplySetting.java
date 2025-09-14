@@ -77,6 +77,6 @@ public interface ReplySetting<C> extends Command.Builder.Applicable<C> {
 
     @Override
     default Command.@NonNull Builder<C> applyToCommandBuilder(Command.@NonNull Builder<C> builder) {
-        return builder.meta(JDA5CommandManager.META_REPLY_SETTING, this);
+        return builder.meta(JDA6CommandManager.META_REPLY_SETTING, this);
     }
 }
