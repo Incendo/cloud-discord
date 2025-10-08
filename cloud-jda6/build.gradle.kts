@@ -14,8 +14,7 @@ dependencies {
 }
 
 javadocLinks {
-    override(libs.jda6, "https://ci.dv8tion.net/job/JDA5/javadoc/")
-    // ^ Leaving as JDA5 for now since they don't have a Javadoc for JDA6 just yet
+    override(libs.jda6, "https://docs.jda.wiki/")
 }
 
 configurations.javadocLinksJavadoc {
