@@ -1,5 +1,6 @@
-import gradle.kotlin.dsl.accessors._4170a67d0be8a515d9becde6b6ee87f3.api
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     id("cloud-discord.base-conventions")
@@ -12,19 +13,17 @@ configure<KotlinJvmProjectExtension> {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-    coreLibrariesVersion = libs.versions.kotlin.get()
-    target {
-        compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "17"
-                languageVersion = libs.versions.kotlin.get().split(".").take(2).joinToString(".")
-                javaParameters = true
-            }
-        }
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+        languageVersion = KotlinVersion.fromVersion(
+            libs.versions.kotlin.get().split(".").take(2).joinToString(".")
+        )
+        javaParameters = true
     }
+    coreLibrariesVersion = libs.versions.kotlin.get()
 
     dependencies {
-        api(kotlin("stdlib-jdk8"))
+        "api"(kotlin("stdlib-jdk8"))
     }
 
     tasks.named("javadocJar", AbstractArchiveTask::class) {
