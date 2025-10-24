@@ -32,7 +32,7 @@ log4j = "2.23.1"
 jupiterEngine = "5.11.0"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
-mockitoKotlin = "5.4.0"
+mockitoKotlin = "6.1.0"
 truth = "1.4.5"
 
 [libraries]
