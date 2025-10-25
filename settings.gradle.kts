@@ -34,8 +34,8 @@ include(":cloud-discord-common")
 
 include(":cloud-discord4j")
 include(":cloud-javacord")
-include(":cloud-jda")
 include(":cloud-jda5")
+include(":cloud-jda6")
 include(":cloud-kord")
 
 include("examples/example-discord4j")
