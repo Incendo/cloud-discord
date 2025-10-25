@@ -25,6 +25,7 @@ dependencies {
 
     // test dependencies
     testImplementation(libs.jupiter.engine)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.jupiter.params)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.jupiter)
