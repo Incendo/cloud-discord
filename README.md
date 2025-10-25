@@ -18,7 +18,6 @@
 
 - cloud-discord-common: shared utilities
 - cloud-discord4j: interaction for Discord4J slash commands.
-- cloud-jda: integration for JDA4
 - cloud-jda5: integration for JDA5 slash commands
 - cloud-jda6: integration for JDA6 slash commands
 - cloud-javacord: integration for javacord
