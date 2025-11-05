@@ -34,13 +34,12 @@ include(":cloud-discord-common")
 
 include(":cloud-discord4j")
 include(":cloud-javacord")
-include(":cloud-jda5")
 include(":cloud-jda6")
 include(":cloud-kord")
 
 include("examples/example-discord4j")
 findProject(":examples/example-discord4j")?.name = "example-discord4j"
-include("examples/example-jda5")
-findProject(":examples/example-jda5")?.name = "example-jda5"
+include("examples/example-jda6")
+findProject(":examples/example-jda6")?.name = "example-jda6"
 include("examples/example-kord")
 findProject(":examples/example-kord")?.name = "example-kord"
