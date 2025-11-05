@@ -19,8 +19,7 @@ cloud = "2.0.0"
 # External
 immutables = "2.11.6"
 javacord = "3.8.0"
-jda = "4.4.1_353"
-jda5 = "5.0.0-beta.24"
+jda6 = "6.1.0"
 logback = "1.5.20"
 kord = "0.14.0"
 kotlinLogging = "7.0.13"
@@ -50,8 +49,7 @@ cloud-kotlin-extensions = { group = "org.incendo", name = "cloud-kotlin-extensio
 # External
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 javacord = { group = "org.javacord", name = "javacord", version.ref = "javacord" }
-jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
-jda5 = { group = "net.dv8tion", name = "JDA", version.ref = "jda5" }
+jda6 = { group = "net.dv8tion", name = "JDA", version.ref = "jda6" }
 logback-core = { group = "ch.qos.logback", name = "logback-core", version.ref = "logback" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 kord = { group = "dev.kord", name = "kord-core", version.ref = "kord" }
