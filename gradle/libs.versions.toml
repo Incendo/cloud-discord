@@ -28,7 +28,7 @@ slf4j = "2.0.17"
 log4j = "2.23.1"
 
 # Test
-jupiterEngine = "5.14.0"
+jupiterEngine = "6.0.1"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
 mockitoKotlin = "6.1.0"
