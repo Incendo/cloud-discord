@@ -23,7 +23,7 @@ jda6 = "6.1.0"
 logback = "1.5.20"
 kord = "0.14.0"
 kotlinLogging = "7.0.13"
-discord4j = "3.2.6"
+discord4j = "3.3.0"
 slf4j = "2.0.17"
 log4j = "2.23.1"
 
