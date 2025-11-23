@@ -19,7 +19,7 @@ cloud = "2.0.0"
 # External
 immutables = "2.11.6"
 javacord = "3.8.0"
-jda6 = "6.1.0"
+jda6 = "6.1.2"
 logback = "1.5.20"
 kord = "0.14.0"
 kotlinLogging = "7.0.13"
