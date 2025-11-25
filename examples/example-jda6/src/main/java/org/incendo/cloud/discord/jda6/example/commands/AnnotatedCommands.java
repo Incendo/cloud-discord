@@ -41,6 +41,7 @@ import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.discord.immutables.ImmutableImpl;
 import org.incendo.cloud.discord.jda6.JDA6CommandManager;
 import org.incendo.cloud.discord.jda6.JDAInteraction;
+import org.incendo.cloud.discord.jda6.annotation.JDAPermissionBuilderModifier;
 import org.incendo.cloud.discord.jda6.annotation.ReplySetting;
 import org.incendo.cloud.discord.jda6.annotation.ReplySettingBuilderModifier;
 import org.incendo.cloud.discord.jda6.example.Example;
@@ -63,6 +64,7 @@ public final class AnnotatedCommands implements Example {
 
         // Adds support for the JDA-specific annotations.
         ReplySettingBuilderModifier.install(annotationParser);
+        JDAPermissionBuilderModifier.install(annotationParser);
         CommandScopeBuilderModifier.install(annotationParser);
 
         // Parses @Command, @Parser, @Suggestions & @ExceptionHandler...
