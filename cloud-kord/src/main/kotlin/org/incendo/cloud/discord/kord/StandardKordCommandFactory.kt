@@ -106,7 +106,8 @@ internal class StandardKordCommandFactory<C : Any>(
         }
     }
 
-    private fun MultiApplicationCommandBuilder.createCommands(scope: CommandScope<C>) {
+    // Visible for testing; there is no other way to run this without a live Kord instance.
+    internal fun MultiApplicationCommandBuilder.createCommands(scope: CommandScope<C>) {
         nodeProcessor.prepareTree()
 
         commandTree.rootNodes().forEach { rootNode ->
@@ -123,11 +124,13 @@ internal class StandardKordCommandFactory<C : Any>(
             input(discordCommand.name(), discordCommand.description()) {
                 createCommand(discordCommand)
 
-                // It's the best we've got
+                // It's the best we've got.
+                // A root node only carries a command when it is executable on its own, so command() is
+                // null for anything that takes arguments or has subcommands.
                 val accessMap = rootNode.nodeMeta().getOrNull(CommandNode.META_KEY_ACCESS)
-                val senderType = rootNode.command().senderType().map { v -> v.type }.orElse(null)
+                val senderType = rootNode.command()?.senderType()?.map { v -> v.type }?.orElse(null)
 
-                accessMap?.get(senderType)
+                senderType?.let { accessMap?.get(it) }
                     ?.let { it as? DiscordPermission }
                     ?.permissionString()
                     ?.let { DiscordBitSet(it) }
